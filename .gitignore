@@ -1,0 +1,52 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+*/node_modules
+**/node_modules
+node_modules/
+packages/*/node_modules/
+packages/*/dist/
+packages/*/lib/
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (keep .env.example)
+.env*
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# monorepo
+.turbo
+dist/
+*.log
+
+# testing
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+
+# docker
+.dockerignore.bak
+
+# development tools
+.claude/
+CLAUDE.md

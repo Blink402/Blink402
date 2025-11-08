@@ -1,0 +1,53 @@
+{
+  "name": "@blink402/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "lint": "eslint src --ext .ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@blink402/config": "workspace:*",
+    "@blink402/database": "workspace:*",
+    "@blink402/helius": "workspace:*",
+    "@blink402/redis": "workspace:*",
+    "@blink402/solana": "workspace:*",
+    "@blink402/types": "workspace:*",
+    "@fastify/compress": "^8.0.1",
+    "@fastify/cors": "^10.0.1",
+    "@fastify/helmet": "^12.0.1",
+    "@fastify/multipart": "^9.3.0",
+    "@fastify/rate-limit": "^10.1.1",
+    "@fastify/static": "^8.3.0",
+    "@fastify/swagger": "^9.3.0",
+    "@fastify/swagger-ui": "^5.2.1",
+    "@solana/web3.js": "^1.98.4",
+    "@types/bs58": "^4.0.4",
+    "bs58": "^6.0.0",
+    "dotenv": "^16.4.7",
+    "esbuild": "^0.25.12",
+    "fastify": "^5.2.0",
+    "ioredis": "^5.8.2",
+    "pino": "^9.7.2",
+    "pino-pretty": "^12.0.0",
+    "sharp": "^0.34.5",
+    "tweetnacl": "^1.0.3",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@vitest/ui": "^4.0.7",
+    "tsx": "^4.19.2",
+    "typescript": "^5",
+    "vitest": "^4.0.7"
+  }
+}

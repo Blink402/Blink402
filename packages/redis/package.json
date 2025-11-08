@@ -1,0 +1,27 @@
+{
+  "name": "@blink402/redis",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@blink402/config": "workspace:*",
+    "ioredis": "^5.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@vitest/ui": "^4.0.7",
+    "typescript": "^5",
+    "vitest": "^4.0.7"
+  }
+}

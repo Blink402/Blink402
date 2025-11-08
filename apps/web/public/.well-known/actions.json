@@ -1,0 +1,13 @@
+{
+  "$schema": "https://actions.dialect.to/actions.json",
+  "rules": [
+    {
+      "pathPattern": "/*",
+      "apiPath": "/actions/**"
+    },
+    {
+      "pathPattern": "/actions/**",
+      "apiPath": "/actions/**"
+    }
+  ]
+}

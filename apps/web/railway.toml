@@ -1,0 +1,25 @@
+[build]
+# Use Dockerfile for monorepo support
+builder = "DOCKERFILE"
+dockerfilePath = "apps/web/Dockerfile"
+
+# Watch patterns - only rebuild when web or shared packages change
+watchPatterns = [
+  "apps/web/**",
+  "packages/types/**",
+  "packages/solana/**",
+  "packages/database/**",
+  "packages/config/**",
+  "turbo.json",
+  "pnpm-lock.yaml",
+  "pnpm-workspace.yaml"
+]
+
+[deploy]
+# Health check - Next.js default health endpoint
+healthcheckPath = "/api/health"
+healthcheckTimeout = 60
+
+# Restart policy
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3

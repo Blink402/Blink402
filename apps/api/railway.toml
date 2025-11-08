@@ -1,0 +1,37 @@
+[build]
+# Use Dockerfile for monorepo support
+builder = "DOCKERFILE"
+dockerfilePath = "apps/api/Dockerfile"
+
+# Watch patterns - only rebuild when API or shared packages change
+watchPatterns = [
+  "apps/api/**",
+  "packages/types/**",
+  "packages/redis/**",
+  "packages/solana/**",
+  "packages/database/**",
+  "packages/config/**",
+  "pnpm-lock.yaml",
+  "pnpm-workspace.yaml"
+]
+
+[deploy]
+# Start command - explicitly use our entrypoint script for volume permissions
+startCommand = "/docker-entrypoint.sh"
+
+# Health check endpoint
+healthcheckPath = "/health"
+healthcheckTimeout = 60
+
+# Restart policy
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# Volume Configuration (configured via Railway Dashboard)
+# Mount a persistent volume at: /app/uploads
+# This ensures gallery images persist across deployments
+# Steps to configure:
+# 1. Go to Railway dashboard → API service → Settings
+# 2. Click "Volumes" → "New Volume"
+# 3. Mount Path: /app/uploads
+# 4. Size: Start with 1GB, scale as needed

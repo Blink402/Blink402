@@ -1,0 +1,20 @@
+{
+  "name": "@blink402/evm",
+  "version": "0.1.0",
+  "description": "EVM blockchain utilities for Blink402 (Base, Ethereum L2s)",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "viem": "^2.26.0",
+    "@blink402/config": "workspace:*",
+    "@blink402/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

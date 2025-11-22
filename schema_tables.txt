@@ -1,0 +1,23 @@
+                 List of relations
+ Schema |          Name          | Type  |  Owner   
+--------+------------------------+-------+----------
+ public | badge_definitions      | table | postgres
+ public | blink_reports          | table | postgres
+ public | blink_trending_metrics | table | postgres
+ public | blinks                 | table | postgres
+ public | creator_debts          | table | postgres
+ public | creators               | table | postgres
+ public | featured_blinks        | table | postgres
+ public | gallery_access         | table | postgres
+ public | gallery_images         | table | postgres
+ public | migrations             | table | postgres
+ public | platform_config        | table | postgres
+ public | receipts               | table | postgres
+ public | refunds                | table | postgres
+ public | reward_claims          | table | postgres
+ public | runs                   | table | postgres
+ public | twitter_activity       | table | postgres
+ public | twitter_credentials    | table | postgres
+ public | url_filters            | table | postgres
+(18 rows)
+

@@ -1,0 +1,601 @@
+"use client"
+import { useEffect, useState, Suspense } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
+import { useWallet, useConnection } from "@solana/wallet-adapter-react"
+import { Transaction } from "@solana/web3.js"
+import NeonDivider from "@/components/NeonDivider"
+import Lottie from "@/components/Lottie"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { WalletButton } from "@/components/wallet"
+import WalletAnalysisResult from "@/components/WalletAnalysisResult"
+import Link from "next/link"
+import { getBlinkBySlug } from "@/lib/api"
+import { logger } from "@/lib/logger"
+import type { BlinkData } from "@/lib/types"
+import { isMobileDevice, shouldUseDeeplink, getPhantomBrowseDeeplink } from "@/lib/mobile"
+
+// API configuration - use Fastify backend
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+
+// Payment states following the x402 flow
+type PaymentState =
+  | "idle"           // Initial state
+  | "connecting"     // Connecting wallet
+  | "ready"          // Wallet connected, ready to pay
+  | "payment-pending" // Payment transaction sent
+  | "verifying"      // Verifying payment on-chain
+  | "executing"      // Executing API call
+  | "success"        // API executed successfully
+  | "failed"         // Payment or API execution failed
+  | "cancelled"      // User cancelled
+
+function CheckoutPageContent() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const slug = searchParams.get("slug") || ""
+
+  const { publicKey, sendTransaction, connected } = useWallet()
+  const { connection } = useConnection()
+
+  const [blink, setBlink] = useState<BlinkData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [paymentState, setPaymentState] = useState<PaymentState>("idle")
+  const [requestBody, setRequestBody] = useState('{\n  "image_url": "https://example.com/bw-photo.jpg"\n}')
+  const [responseData, setResponseData] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [txSignature, setTxSignature] = useState<string | null>(null)
+  const [reference, setReference] = useState<string | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Detect mobile device on mount
+  useEffect(() => {
+    setIsMobile(isMobileDevice())
+  }, [])
+
+  useEffect(() => {
+    // Fetch blink data from API
+    if (slug) {
+      getBlinkBySlug(slug).then((data) => {
+        if (data) {
+          setBlink(data)
+        } else {
+          setError('Blink not found')
+        }
+      }).catch((err) => {
+        logger.error('Failed to load blink:', err)
+        setError(err.message || 'Failed to load blink')
+      }).finally(() => {
+        setIsLoading(false)
+      })
+    } else {
+      setError('No blink specified')
+      setIsLoading(false)
+    }
+  }, [slug])
+
+  // Update state when wallet connects/disconnects
+  useEffect(() => {
+    if (connected && publicKey && paymentState === "idle") {
+      setPaymentState("ready")
+    } else if (!connected) {
+      // Reset payment state on wallet disconnect
+      if (paymentState !== "idle" && paymentState !== "success") {
+        setPaymentState("idle")
+        setError("Wallet disconnected. Please reconnect to continue.")
+        setTxSignature(null)
+        setReference(null)
+        setResponseData(null)
+      }
+    }
+  }, [connected, publicKey, paymentState])
+
+  // Real payment flow with Solana
+  const handlePay = async () => {
+    if (!blink || !publicKey || !connected) {
+      setError("Please connect your wallet first")
+      return
+    }
+
+    setPaymentState("payment-pending")
+    setError(null)
+
+    try {
+      // Step 1: Request transaction from Actions endpoint
+      const actionsResponse = await fetch(`${API_BASE_URL}/actions/${slug}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ account: publicKey.toBase58() }),
+      })
+
+      if (!actionsResponse.ok) {
+        throw new Error('Failed to create payment transaction')
+      }
+
+      const { transaction: base64Transaction, reference: ref } = await actionsResponse.json()
+      setReference(ref)
+
+      // Step 2: Deserialize transaction (use API's blockhash - DO NOT replace it)
+      const transactionBuffer = Buffer.from(base64Transaction, 'base64')
+      const transaction = Transaction.from(transactionBuffer)
+
+      // Extract blockhash from transaction for confirmation (API already set this)
+      const blockhash = transaction.recentBlockhash
+      const lastValidBlockHeight = transaction.lastValidBlockHeight
+
+      if (!blockhash) {
+        throw new Error('Invalid transaction: missing blockhash')
+      }
+
+      // Send transaction with proper options
+      const signature = await sendTransaction(transaction, connection, {
+        skipPreflight: false,
+        maxRetries: 3,
+      })
+      setTxSignature(signature)
+
+      // Step 3: Wait for confirmation using confirmTransaction (more reliable than polling)
+      setPaymentState("verifying")
+
+      try {
+        // Use native confirmation method - throws if blockhash expires or tx fails
+        const confirmation = await connection.confirmTransaction(
+          {
+            signature,
+            blockhash: blockhash!,
+            lastValidBlockHeight: lastValidBlockHeight!,
+          },
+          'confirmed'
+        )
+
+        if (confirmation.value.err) {
+          // Parse specific Solana error types
+          const error = confirmation.value.err
+          let errorMessage = 'Transaction failed on-chain'
+
+          if (typeof error === 'object' && error !== null) {
+            if ('InstructionError' in error) {
+              const instructionError = (error as any).InstructionError[1]
+              if (typeof instructionError === 'object') {
+                if ('Custom' in instructionError) {
+                  errorMessage = `Transaction failed: Custom error code ${instructionError.Custom}`
+                } else if ('InsufficientFunds' in instructionError) {
+                  errorMessage = 'Insufficient funds. Please add SOL to your wallet and try again.'
+                } else if ('InvalidAccountData' in instructionError) {
+                  errorMessage = 'Invalid account data. Please check the recipient address.'
+                } else {
+                  const errorType = Object.keys(instructionError)[0]
+                  errorMessage = `Transaction failed: ${errorType}`
+                }
+              }
+            } else if ('InsufficientFundsForFee' in error) {
+              errorMessage = 'Insufficient SOL for transaction fees. Please add SOL to your wallet.'
+            } else if ('BlockhashNotFound' in error) {
+              errorMessage = 'Transaction expired. Please try again with a fresh transaction.'
+            } else if ('AccountNotFound' in error) {
+              errorMessage = 'Account not found. The recipient may need to create a token account first.'
+            } else {
+              const errorType = Object.keys(error)[0]
+              errorMessage = `Transaction failed: ${errorType}`
+            }
+          }
+
+          throw new Error(errorMessage)
+        }
+      } catch (err) {
+        // Handle timeout/expiration errors
+        if (err instanceof Error) {
+          if (err.message.includes('block height exceeded')) {
+            throw new Error('Transaction expired (blockhash timeout). Please try again.')
+          }
+          // Re-throw our custom errors
+          throw err
+        }
+        throw new Error('Transaction confirmation failed. Please check Solscan for status.')
+      }
+
+      // Step 4: Execute API call via x402 proxy
+      setPaymentState("executing")
+      let requestData
+      try {
+        requestData = JSON.parse(requestBody)
+      } catch {
+        requestData = {}
+      }
+
+      const bazaarResponse = await fetch(`${API_BASE_URL}/bazaar/${slug}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reference: ref,
+          signature,
+          data: requestData,
+        }),
+      })
+
+      if (!bazaarResponse.ok) {
+        const errorData = await bazaarResponse.json()
+        throw new Error(errorData.error || 'API execution failed')
+      }
+
+      const result = await bazaarResponse.json()
+
+      // API now returns standardized format: {success: true, data: {...}}
+      setResponseData(result.data)
+
+      setPaymentState("success")
+    } catch (err) {
+      logger.error('Payment error:', err)
+
+      // Better error messages for common issues
+      let errorMessage = "Payment or execution failed"
+      if (err instanceof Error) {
+        if (err.message.includes('User rejected')) {
+          errorMessage = "Transaction rejected by user"
+        } else if (err.message.includes('Unexpected error')) {
+          errorMessage = "Wallet error. Please check your SOL balance and try again."
+        } else if (err.message.includes('insufficient funds')) {
+          errorMessage = "Insufficient SOL balance. You need SOL for transaction fees."
+        } else if (err.message.includes('blockhash')) {
+          errorMessage = "Transaction expired. Please try again."
+        } else {
+          errorMessage = err.message
+        }
+      }
+
+      setError(errorMessage)
+      setPaymentState("failed")
+    }
+  }
+
+  const handleCancel = () => {
+    setPaymentState("cancelled")
+    setTimeout(() => {
+      router.push(`/blink/${slug}`)
+    }, 1500)
+  }
+
+  const handleReset = () => {
+    setPaymentState("ready")
+    setError(null)
+    setResponseData(null)
+    setTxSignature(null)
+    setReference(null)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-neon-black flex items-center justify-center">
+        <div className="text-center">
+          <Lottie src="/lottie/Loading (Neon spinning).lottie" autoplay loop width={64} height={64} />
+          <p className="text-neon-grey font-mono text-sm mt-4">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !blink) {
+    return (
+      <div className="min-h-screen bg-neon-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-20 h-20 rounded-full bg-red-500/20 border border-red-500 flex items-center justify-center mx-auto mb-4">
+            <span className="text-red-500 text-4xl">✕</span>
+          </div>
+          <h1 className="text-2xl font-mono text-neon-white mb-4">
+            {error || 'Blink not found'}
+          </h1>
+          <Link href="/catalog">
+            <Button variant="outline" className="font-mono">
+              ← Back to Catalog
+            </Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <main className="min-h-screen bg-neon-black">
+      <section className="px-6 py-8">
+        <div className="max-w-5xl mx-auto">
+          {/* Breadcrumb */}
+          <div className="mb-8">
+            <Link href={`/blink/${slug}`} className="text-neon-blue-light hover:text-neon-blue-dark font-mono text-sm">
+              ← Back to {blink.title}
+            </Link>
+          </div>
+
+          {/* Header */}
+          <header className="mb-12">
+            <h1 className="font-sans text-neon-white mb-4 heading-md">
+              Checkout
+            </h1>
+            <p className="text-neon-grey font-mono text-base">Complete payment to execute API call</p>
+          </header>
+
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Left: Blink Info & Request */}
+            <div className="space-y-6">
+              {/* Blink Card */}
+              <Card className="bg-neon-dark border-neon-blue-dark/20 p-6">
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-16 h-16 bg-neon-black border border-neon-blue-dark/30 rounded-lg flex items-center justify-center">
+                    <span className="text-neon font-mono text-2xl">⚡</span>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-neon-white font-mono text-lg">{blink.title}</h3>
+                      <Badge className="bg-neon-blue-dark/20 text-neon-blue-light border-neon-blue-dark/30">
+                        {blink.category}
+                      </Badge>
+                    </div>
+                    <p className="text-neon-grey font-mono text-sm">{blink.description}</p>
+                  </div>
+                </div>
+
+                <NeonDivider className="my-4" />
+
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-neon-grey font-mono text-sm">Price</span>
+                    <span className="text-neon-white font-mono text-sm font-bold">${blink.price_usdc} {blink.payment_token || 'SOL'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-neon-grey font-mono text-sm">Method</span>
+                    <span className="text-neon-white font-mono text-sm">{blink.method}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-neon-grey font-mono text-sm">Creator</span>
+                    <span className="text-neon-white font-mono text-sm">{blink.creator.wallet}</span>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Request Body */}
+              {paymentState === "ready" && (
+                <Card className="bg-neon-dark border-neon-blue-dark/20 p-6">
+                  <Label className="text-neon-white font-mono mb-2 block">Request Body</Label>
+                  <Textarea
+                    value={requestBody}
+                    onChange={(e) => setRequestBody(e.target.value)}
+                    className="bg-neon-black border-neon-blue-dark/30 text-neon-white font-mono"
+                    rows={6}
+                  />
+                  <p className="text-neon-grey text-xs font-mono mt-2">Edit the JSON request body as needed</p>
+                </Card>
+              )}
+            </div>
+
+            {/* Right: Payment State Machine */}
+            <div>
+              <Card className="bg-neon-dark border-neon-blue-dark/20 p-6 sticky top-8">
+                <h3 className="text-neon-white font-mono text-lg mb-6">Payment Status</h3>
+
+                {/* State: Idle - Wallet not connected */}
+                {paymentState === "idle" && (
+                  <div className="space-y-6">
+                    <div className="text-center py-8">
+                      <div className="w-20 h-20 rounded-full bg-neon-black border border-neon-blue-dark/30 flex items-center justify-center mx-auto mb-4">
+                        <span className="text-neon text-3xl">🔌</span>
+                      </div>
+                      <p className="text-neon-grey font-mono text-sm mb-4">
+                        {isMobile ? 'Open in Phantom to continue' : 'Connect your wallet to continue'}
+                      </p>
+                      <div className="flex justify-center">
+                        {isMobile && shouldUseDeeplink() ? (
+                          <Button
+                            onClick={() => {
+                              const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
+                              const deeplink = getPhantomBrowseDeeplink(currentUrl)
+                              window.location.href = deeplink
+                            }}
+                            className="btn-primary"
+                          >
+                            Open in Phantom
+                          </Button>
+                        ) : (
+                          <WalletButton variant="default" />
+                        )}
+                      </div>
+                      {isMobile && (
+                        <p className="text-neon-grey font-mono text-xs mt-4">
+                          This will open the page in Phantom's browser where you can connect your wallet
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* State: Ready */}
+                {paymentState === "ready" && (
+                  <div className="space-y-6">
+                    <Alert className="bg-neon-black border-neon-blue-dark/30">
+                      <AlertDescription className="text-neon-grey font-mono text-sm">
+                        <span className="text-neon-blue-light">✓</span> Wallet connected and ready
+                      </AlertDescription>
+                    </Alert>
+
+                    <div className="bg-neon-black border border-neon-blue-dark/30 rounded-lg p-4">
+                      <div className="text-neon-grey font-mono text-xs mb-2">You will pay</div>
+                      <div className="text-neon-white font-mono text-3xl font-bold">${blink.price_usdc} {blink.payment_token || 'SOL'}</div>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <Button onClick={handleCancel} className="btn-ghost flex-1">
+                        Cancel
+                      </Button>
+                      <Button onClick={handlePay} className="btn-primary flex-1">
+                        Pay & Execute
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* State: Payment Pending */}
+                {paymentState === "payment-pending" && (
+                  <div className="text-center py-8">
+                    <Lottie src="/lottie/Loading (Neon spinning).lottie" autoplay loop width={64} height={64} />
+                    <p className="text-neon-white font-mono text-sm mt-4">Processing payment...</p>
+                    <p className="text-neon-grey font-mono text-xs mt-2">Please approve the transaction in your wallet</p>
+                  </div>
+                )}
+
+                {/* State: Verifying */}
+                {paymentState === "verifying" && (
+                  <div className="text-center py-8">
+                    <Lottie src="/lottie/Loading (Neon spinning).lottie" autoplay loop width={64} height={64} />
+                    <p className="text-neon-white font-mono text-sm mt-4">Verifying payment...</p>
+                    <p className="text-neon-grey font-mono text-xs mt-2">
+                      Checking transaction on-chain
+                    </p>
+                    {reference && (
+                      <p className="text-neon-grey font-mono text-xs mt-4 break-all">
+                        Reference: {reference}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* State: Executing */}
+                {paymentState === "executing" && (
+                  <div className="text-center py-8">
+                    <Lottie src="/lottie/Loading (Neon spinning).lottie" autoplay loop width={64} height={64} />
+                    <p className="text-neon-white font-mono text-sm mt-4">Executing API call...</p>
+                    <p className="text-neon-grey font-mono text-xs mt-2">Payment verified ✓</p>
+                  </div>
+                )}
+
+                {/* State: Success */}
+                {paymentState === "success" && (
+                  <div className="space-y-6">
+                    <div className="text-center py-8">
+                      <Lottie
+                        src="/lottie/Success-Checkmark-Green.lottie"
+                        autoplay
+                        loop={false}
+                        width={80}
+                        height={80}
+                        className="mx-auto mb-4"
+                      />
+                      <p className="text-neon-white font-mono text-sm mb-2">Success!</p>
+                      <p className="text-neon-grey font-mono text-xs">API call executed successfully</p>
+                    </div>
+
+                    {txSignature && (
+                      <div className="bg-neon-black border border-neon-blue-dark/30 rounded-lg p-4">
+                        <div className="text-neon-grey font-mono text-xs mb-2">Transaction</div>
+                        <a
+                          href={`https://solscan.io/tx/${txSignature}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-neon-blue-light font-mono text-xs hover:text-neon-blue-dark break-all"
+                        >
+                          {txSignature}
+                        </a>
+                      </div>
+                    )}
+
+                    {responseData && (
+                      <>
+                        {/* Wallet Analyzer: Show formatted analysis (detect by data structure) */}
+                        {responseData.wallet && responseData.transactionSummary ? (
+                          <div className="bg-neon-black border border-neon-blue-dark/30 rounded-lg p-4">
+                            <div className="text-neon-grey font-mono text-xs mb-4">Wallet Analysis Results</div>
+                            <WalletAnalysisResult data={responseData} />
+                          </div>
+                        ) : (
+                          /* Other blinks: Show raw JSON */
+                          <div className="bg-neon-black border border-neon-blue-dark/30 rounded-lg p-4">
+                            <div className="text-neon-grey font-mono text-xs mb-2">Response</div>
+                            <pre className="text-neon-white font-mono text-xs overflow-auto max-h-96">
+                              {JSON.stringify(responseData, null, 2)}
+                            </pre>
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    <div className="flex gap-3">
+                      <Button onClick={handleReset} className="btn-ghost flex-1">
+                        Run Again
+                      </Button>
+                      <Link href={`/blink/${slug}`} className="flex-1">
+                        <Button className="btn-primary w-full">Done</Button>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+
+                {/* State: Failed */}
+                {paymentState === "failed" && (
+                  <div className="space-y-6">
+                    <div className="text-center py-8">
+                      <div className="w-20 h-20 rounded-full bg-red-500/20 border border-red-500 flex items-center justify-center mx-auto mb-4">
+                        <span className="text-red-500 text-4xl">✕</span>
+                      </div>
+                      <p className="text-neon-white font-mono text-sm mb-2">Failed</p>
+                      <p className="text-neon-grey font-mono text-xs">{error || "Something went wrong"}</p>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <Button onClick={handleCancel} className="btn-ghost flex-1">
+                        Cancel
+                      </Button>
+                      <Button onClick={handleReset} className="btn-primary flex-1">
+                        Try Again
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* State: Cancelled */}
+                {paymentState === "cancelled" && (
+                  <div className="text-center py-8">
+                    <div className="w-20 h-20 rounded-full bg-neon-grey/20 border border-neon-grey flex items-center justify-center mx-auto mb-4">
+                      <span className="text-neon-grey text-4xl">⊘</span>
+                    </div>
+                    <p className="text-neon-white font-mono text-sm mb-2">Cancelled</p>
+                    <p className="text-neon-grey font-mono text-xs">Redirecting back...</p>
+                  </div>
+                )}
+
+                {/* Error Alert */}
+                {error && paymentState !== "failed" && (
+                  <Alert className="mt-4 bg-red-500/10 border-red-500/30">
+                    <AlertDescription className="text-red-400 font-mono text-sm">{error}</AlertDescription>
+                  </Alert>
+                )}
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Lottie
+            src="/lottie/Loading (Neon spinning).lottie"
+            autoplay
+            loop
+            width={80}
+            height={80}
+            applyNeonFilter={true}
+          />
+          <p className="mt-4 text-neon-grey font-mono">Loading checkout...</p>
+        </div>
+      </main>
+    }>
+      <CheckoutPageContent />
+    </Suspense>
+  )
+}

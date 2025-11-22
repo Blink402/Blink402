@@ -1,0 +1,31 @@
+--
+-- Blink402 Database Schema Documentation
+-- ================================
+-- Generated: 2025-11-12
+-- PostgreSQL Version: 17.6
+-- ================================
+--
+-- IMPORTANT: This is documentation of the production database schema.
+-- The actual schema is managed through migrations in /migrations/ directory.
+-- To bootstrap a new database, run migrations in order (see docs/MIGRATIONS.md).
+--
+-- Current Tables (18):
+-- ================================
+-- Core: creators, blinks, runs, receipts
+-- Catalog: badge_definitions, blink_reports, featured_blinks, blink_trending_metrics, url_filters
+-- Payment: reward_claims, refunds, creator_debts
+-- Gallery: gallery_images, gallery_access
+-- Platform: platform_config, migrations
+-- Social: twitter_activity, twitter_credentials
+--
+-- Key Features: x402 payment protocol, reward mode, catalog system, performance indexes
+--
+-- Migration Status: WARNING - Only 1 of 32 migrations tracked (schema is up-to-date but tracking is not)
+--
+-- Database Stats (2025-11-12):
+-- - Total Runs: 841 (238 executed, 601 failed, 1 pending, 1 paid)
+-- - Active Blinks: 34 (31 charge, 2 reward, 1 paused)
+-- - Average Latency: 1063ms (target: <800ms)
+--
+-- TODO: Export full schema with pg_dump v17+ when available
+--

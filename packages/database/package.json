@@ -1,0 +1,33 @@
+{
+  "name": "@blink402/database",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "migrate": "tsx migrate.ts up",
+    "migrate:status": "tsx migrate.ts status"
+  },
+  "dependencies": {
+    "@blink402/config": "workspace:*",
+    "@blink402/types": "workspace:*",
+    "bcryptjs": "^3.0.3",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.6",
+    "@vitest/ui": "^4.0.7",
+    "dotenv": "^16.4.7",
+    "tsx": "^4.19.2",
+    "typescript": "^5",
+    "vitest": "^4.0.7"
+  }
+}

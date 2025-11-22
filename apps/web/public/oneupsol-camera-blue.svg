@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="blue" x1="16" y1="16" x2="112" y2="112" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="var(--blue-1, #3BA7FF)"/>
+      <stop offset="1" stop-color="var(--blue-2, #7CDAFF)"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="128" height="128" rx="16" fill="transparent"/>
+
+  <g filter="url(#glow)" stroke="url(#blue)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="22" y="18" width="28" height="16" rx="6" fill="rgba(0,0,0,0.35)"/>
+    <rect x="12" y="28" width="104" height="72" rx="14" fill="rgba(0,0,0,0.35)"/>
+    <circle cx="64" cy="64" r="24" fill="rgba(0,0,0,0.2)"/>
+    <circle cx="64" cy="64" r="16" fill="none" stroke-dasharray="6 5"/>
+    <circle cx="36" cy="44" r="4" fill="url(#blue)"/>
+    <rect x="88" y="44" width="20" height="12" rx="3" fill="url(#blue)"/>
+  </g>
+
+  <path d="M100 26 l2 5 5 2 -5 2 -2 5 -2-5 -5-2 5-2 2-5z" fill="url(#blue)" opacity="0.95"/>
+</svg>

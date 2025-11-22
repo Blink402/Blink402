@@ -1,0 +1,104 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+*/node_modules
+**/node_modules
+node_modules/
+packages/*/node_modules/
+packages/*/dist/
+packages/*/lib/
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (keep .env.example)
+.env*
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# monorepo
+.turbo
+dist/
+*.log
+
+# testing
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+.playwright-mcp/
+playwright/
+**/playwright-report/
+**/test-results/
+
+# docker
+.dockerignore.bak
+
+# development tools
+.claude/
+CLAUDE.md
+
+# internal documentation (not for public repo)
+.github/copilot-instructions.md
+prd.md
+MCP_SERVER_SUMMARY.md
+HOTFIX_DEPLOYMENT.md
+PAYMENT_DEBUG_GUIDE.md
+PAYMENT_TESTING_GUIDE.md
+QUICK-START.md
+DEPLOYMENT_SUMMARY.md
+FRONTEND_TEST_REPORT.md
+TESTING_GUIDE.md
+TWEET_WALLET_HEALTH_LAUNCH.md
+WALLET_HEALTH_CHECKER_FIXES.md
+archive/
+docs/B402_PUMPPORTAL_INTEGRATION.md
+docs/Blink402_v2_Implementation_Guide.md
+docs/ENCRYPTION_KEY_SETUP.md
+docs/LOTTERY_BUYBACK_TESTING.md
+docs/LOTTERY_IMPLEMENTATION.md
+docs/MONOREPO_MIGRATION.md
+docs/ONCHAIN_X402_INTEGRATION.md
+docs/PAYAI_INTEGRATION_FIX.md
+docs/PERFORMANCE_REPORT.md
+docs/REDIS_RAILWAY_TROUBLESHOOTING.md
+docs/REFACTORING_COMPLETE.md
+docs/REFACTORING_PLAN.md
+docs/REFACTORING_PROGRESS.md
+docs/SLOT_MACHINE_SETUP.md
+docs/SYSTEM_HEALTH_REPORT.md
+docs/TWEET_IDEAS.md
+docs/TWITTER_BOT_SETUP_COMPLETE.md
+docs/TWITTER_MONETIZATION_GUIDE.md
+docs/TWITTER_QUICK_REF.md
+docs/X402_FLOW_VERIFICATION.md
+docs/onchaindocs.md
+docs/runbook.md
+docs/security/
+
+# Devnet test wallets (do not commit)
+devnet-test-wallet.json
+platform-refund-devnet.json
+platform-refund-prod.json
+test-refund-flow.mjs
+apps/api/nul
+apps/web/nul
+nul
+**/nul

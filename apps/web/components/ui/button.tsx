@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
 
 import { cn } from '@/lib/utils'
 
@@ -10,16 +12,17 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 
-          'border-[1.5px] border-dashed border-neon-blue-light/90 bg-transparent text-neon-white font-mono hover:shadow-[0_0_16px_rgba(90,180,255,0.15),inset_0_0_8px_rgba(90,180,255,0.03)] active:scale-98 active:shadow-[0_0_12px_rgba(90,180,255,0.12)]',
+          'bg-neon-blue-dark text-neon-white shadow-[0_0_15px_rgba(67,97,238,0.5)] hover:bg-neon-blue-light hover:shadow-[0_0_25px_rgba(76,201,240,0.6)] border border-transparent',
         destructive:
           'bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
         outline:
-          'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
+          'border border-neon-blue-light/50 bg-transparent text-neon-blue-light hover:bg-neon-blue-light/10 hover:border-neon-blue-light hover:shadow-[0_0_15px_rgba(76,201,240,0.3)]',
         secondary:
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost:
-          'border-2 border-dashed border-neon-grey bg-transparent text-neon-grey font-mono hover:text-neon-white hover:border-neon-white hover:shadow-[0_0_8px_rgba(255,255,255,0.2)] active:scale-97 active:text-neon-blue-light active:border-neon-blue-light',
+          'text-neon-grey hover:text-neon-white hover:bg-neon-white/5',
         link: 'text-primary underline-offset-4 hover:underline',
+        glow: 'bg-gradient-to-r from-neon-blue-dark to-neon-purple text-white shadow-[0_0_20px_rgba(67,97,238,0.6)] hover:shadow-[0_0_30px_rgba(114,9,183,0.6)] border border-transparent',
       },
       size: {
         default: 'h-11 px-4 py-2 has-[>svg]:px-3 min-w-[44px]',
@@ -48,10 +51,34 @@ function Button({
     asChild?: boolean
   }) {
   const Comp = asChild ? Slot : 'button'
+  const buttonRef = React.useRef<HTMLButtonElement>(null)
+
+  useGSAP(() => {
+    if (!buttonRef.current || asChild) return
+
+    const btn = buttonRef.current
+    
+    // Simple hover animation using GSAP
+    const hoverAnim = gsap.to(btn, {
+      scale: 1.05,
+      duration: 0.2,
+      paused: true,
+      ease: "power1.out"
+    })
+
+    btn.addEventListener('mouseenter', () => hoverAnim.play())
+    btn.addEventListener('mouseleave', () => hoverAnim.reverse())
+
+    return () => {
+      btn.removeEventListener('mouseenter', () => hoverAnim.play())
+      btn.removeEventListener('mouseleave', () => hoverAnim.reverse())
+    }
+  }, { scope: buttonRef })
 
   return (
     <Comp
       data-slot="button"
+      ref={buttonRef}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />

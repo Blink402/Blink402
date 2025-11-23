@@ -6,10 +6,26 @@ import { getB402HolderTier, getTierDisplayInfo, getTierThresholds, type TokenHol
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import TierDetailsModal from "./TierDetailsModal"
+import { Circle, Award, Medal, Gem, Info } from "lucide-react"
 
 interface TierBadgeWidgetProps {
   variant?: 'desktop' | 'mobile'
   className?: string
+}
+
+const TierIcon = ({ tier, className }: { tier: TokenHolderTier, className?: string }) => {
+  switch (tier) {
+    case 'BRONZE':
+      return <Award className={cn("text-amber-700", className)} />;
+    case 'SILVER':
+      return <Medal className={cn("text-gray-400", className)} />;
+    case 'GOLD':
+      return <Medal className={cn("text-yellow-400", className)} />;
+    case 'DIAMOND':
+      return <Gem className={cn("text-cyan-400", className)} />;
+    default:
+      return <Circle className={cn("text-gray-500", className)} />;
+  }
 }
 
 export function TierBadgeWidget({ variant = 'desktop', className }: TierBadgeWidgetProps) {
@@ -141,8 +157,8 @@ export function TierBadgeWidget({ variant = 'desktop', className }: TierBadgeWid
           ) : (
             <>
               {/* Tier Icon */}
-              <span className="text-2xl animate-pulse" style={{ animationDuration: '2s' }}>
-                {tierDisplay.icon}
+              <span className="animate-pulse" style={{ animationDuration: '2s' }}>
+                <TierIcon tier={tier} className="w-6 h-6" />
               </span>
 
               {/* Balance & Tier Info */}
@@ -164,14 +180,7 @@ export function TierBadgeWidget({ variant = 'desktop', className }: TierBadgeWid
 
               {/* Tooltip Indicator (chevron or info icon) */}
               {variant === 'desktop' && (
-                <svg
-                  className="w-3 h-3 text-[--neon-grey] group-hover:text-[--neon-blue-light] transition-colors"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <Info className="w-3 h-3 text-[--neon-grey] group-hover:text-[--neon-blue-light] transition-colors" />
               )}
             </>
           )}
@@ -180,13 +189,12 @@ export function TierBadgeWidget({ variant = 'desktop', className }: TierBadgeWid
           <div
             className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity pointer-events-none"
             style={{
-              background: `linear-gradient(135deg, ${
-                tier === 'BRONZE' ? 'rgba(217, 119, 6, 0.3)' :
-                tier === 'SILVER' ? 'rgba(156, 163, 175, 0.3)' :
-                tier === 'GOLD' ? 'rgba(251, 191, 36, 0.3)' :
-                tier === 'DIAMOND' ? 'rgba(34, 211, 238, 0.3)' :
-                'rgba(90, 180, 255, 0.3)'
-              }, transparent)`
+              background: `linear-gradient(135deg, ${tier === 'BRONZE' ? 'rgba(217, 119, 6, 0.3)' :
+                  tier === 'SILVER' ? 'rgba(156, 163, 175, 0.3)' :
+                    tier === 'GOLD' ? 'rgba(251, 191, 36, 0.3)' :
+                      tier === 'DIAMOND' ? 'rgba(34, 211, 238, 0.3)' :
+                        'rgba(90, 180, 255, 0.3)'
+                }, transparent)`
             }}
           />
         </button>

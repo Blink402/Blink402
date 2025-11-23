@@ -5,23 +5,25 @@
 
 /* Single consolidated :root block with all variables */
 :root {
-  /* Blink402 neon palette */
-  --neon-black: #171717;
-  --neon-dark: #1e1e1e;
-  --neon-grey: #9d9d9d;
-  /* Updated from #8b8b8b for WCAG AA contrast (4.5:1) */
+  /* Blink402 neon palette - Enhanced for vibrancy */
+  --neon-black: #0a0a0a; /* Darker black for better contrast */
+  --neon-dark: #121212;
+  --neon-grey: #a0a0a0;
   --neon-white: #ffffff;
-  --neon-blue-light: #5AB4FF;
-  /* Brighter, more saturated blue */
-  --neon-blue-dark: #3B8FD9;
-  /* More vibrant dark blue */
-  --neon-blue-glow: #2D7BC6;
-  /* Deeper blue for glow effects */
+  
+  /* Electric Blue Palette */
+  --neon-blue-light: #4cc9f0; /* Cyan-ish blue */
+  --neon-blue-dark: #4361ee; /* Deep electric blue */
+  --neon-blue-glow: #3a0ca3; /* Deep purple-blue for glow */
+  
+  /* Accent Colors */
+  --neon-purple: #7209b7;
+  --neon-pink: #f72585;
 
   /* Neon utilities */
-  --accent-gradient: linear-gradient(90deg, #3B8FD9 0%, #5AB4FF 50%, #2D7BC6 100%);
-  --border-dashed: 1.5px dashed rgba(90, 180, 255, 0.9);
-  --ring-neon: 0 0 0 3px rgba(90, 180, 255, 0.25), 0 0 0 1px rgba(90, 180, 255, 0.6) inset, 0 0 6px rgba(90, 180, 255, 0.3), 0 0 12px rgba(45, 123, 198, 0.15);
+  --accent-gradient: linear-gradient(135deg, var(--neon-blue-light) 0%, var(--neon-blue-dark) 50%, var(--neon-purple) 100%);
+  --border-dashed: 1.5px dashed rgba(76, 201, 240, 0.5);
+  --ring-neon: 0 0 0 3px rgba(76, 201, 240, 0.25), 0 0 0 1px rgba(76, 201, 240, 0.6) inset, 0 0 10px rgba(76, 201, 240, 0.4), 0 0 20px rgba(67, 97, 238, 0.2);
 
   /* Premium easing curves */
   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -29,47 +31,47 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* AI-specific design tokens */
-  --ai-gradient: linear-gradient(135deg, #3B8FD9 0%, #5AB4FF 50%, #6B5AB4 100%);
-  --ai-glow: 0 0 12px rgba(90, 180, 255, 0.6), 0 0 24px rgba(107, 90, 180, 0.3), inset 0 0 8px rgba(90, 180, 255, 0.1);
+  --ai-gradient: linear-gradient(135deg, var(--neon-blue-dark) 0%, var(--neon-purple) 50%, var(--neon-pink) 100%);
+  --ai-glow: 0 0 15px rgba(76, 201, 240, 0.6), 0 0 30px rgba(114, 9, 183, 0.4), inset 0 0 10px rgba(76, 201, 240, 0.2);
 
   /* Semantic tokens for shadcn (mapped to neon palette) */
-  --background: #171717;
-  --foreground: #ffffff;
-  --card: #1e1e1e;
-  --card-foreground: #ffffff;
-  --popover: #1e1e1e;
-  --popover-foreground: #ffffff;
-  --primary: #60B5FF;
-  --primary-foreground: #171717;
-  --secondary: #1e1e1e;
-  --secondary-foreground: #ffffff;
-  --muted: #1e1e1e;
-  --muted-foreground: #8b8b8b;
-  --accent: #4A7BB8;
-  --accent-foreground: #ffffff;
+  --background: var(--neon-black);
+  --foreground: var(--neon-white);
+  --card: var(--neon-dark);
+  --card-foreground: var(--neon-white);
+  --popover: var(--neon-dark);
+  --popover-foreground: var(--neon-white);
+  --primary: var(--neon-blue-light);
+  --primary-foreground: var(--neon-black);
+  --secondary: var(--neon-dark);
+  --secondary-foreground: var(--neon-white);
+  --muted: #1a1a1a;
+  --muted-foreground: var(--neon-grey);
+  --accent: var(--neon-blue-dark);
+  --accent-foreground: var(--neon-white);
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: rgba(74, 123, 184, 0.35);
-  --input: rgba(74, 123, 184, 0.35);
-  --ring: rgba(96, 181, 255, 0.7);
-  --radius: 0.6rem;
+  --border: rgba(76, 201, 240, 0.2);
+  --input: rgba(76, 201, 240, 0.2);
+  --ring: rgba(76, 201, 240, 0.7);
+  --radius: 0.75rem; /* Slightly more rounded */
 
   /* Chart colors */
-  --chart-1: #60B5FF;
-  --chart-2: #4A7BB8;
-  --chart-3: #1e1e1e;
-  --chart-4: #8b8b8b;
-  --chart-5: #ffffff;
+  --chart-1: var(--neon-blue-light);
+  --chart-2: var(--neon-blue-dark);
+  --chart-3: var(--neon-purple);
+  --chart-4: var(--neon-pink);
+  --chart-5: var(--neon-grey);
 
   /* Sidebar */
-  --sidebar: #1e1e1e;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #9d9d9d;
-  --sidebar-primary-foreground: #171717;
-  --sidebar-accent: #4A7BB8;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(74, 123, 184, 0.35);
-  --sidebar-ring: rgba(96, 181, 255, 0.7);
+  --sidebar: var(--neon-dark);
+  --sidebar-foreground: var(--neon-white);
+  --sidebar-primary: var(--neon-blue-light);
+  --sidebar-primary-foreground: var(--neon-black);
+  --sidebar-accent: var(--neon-blue-dark);
+  --sidebar-accent-foreground: var(--neon-white);
+  --sidebar-border: rgba(76, 201, 240, 0.2);
+  --sidebar-ring: rgba(76, 201, 240, 0.7);
 }
 
 @theme inline {
@@ -104,6 +106,8 @@
   --color-neon-white: var(--neon-white);
   --color-neon-blue-light: var(--neon-blue-light);
   --color-neon-blue-dark: var(--neon-blue-dark);
+  --color-neon-purple: var(--neon-purple);
+  --color-neon-pink: var(--neon-pink);
 
   /* Legacy green colors - deprecated, use blue instead */
   --color-neon-green-light: var(--neon-blue-light);

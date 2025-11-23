@@ -8,8 +8,11 @@ import { SCROLL_CONSTANTS } from '@/lib/constants'
 import { WalletButton } from '@/components/wallet/WalletButton'
 import { Button } from '@/components/ui/button'
 import { ImageWithFallback } from '@/components/ImageWithFallback'
+import { TierBadgeWidget } from '@/components/TierBadgeWidget'
+import { usePrivy } from '@privy-io/react-auth'
 
 export function Navigation() {
+  const { authenticated } = usePrivy()
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -94,6 +97,7 @@ export function Navigation() {
 
   const links = [
     { href: '/catalog', label: 'Catalog' },
+    { href: '/use-cases', label: 'Use Cases' },
     { href: '/dashboard', label: 'My Blinks' },
     { href: '/docs', label: 'Docs' },
   ]
@@ -180,6 +184,14 @@ export function Navigation() {
           >
             Create Blink
           </Link>
+
+          {/* Tier Badge Widget (desktop) */}
+          {authenticated && (
+            <div className="h-10 inline-flex items-center">
+              <TierBadgeWidget variant="desktop" />
+            </div>
+          )}
+
           <div className="h-10 inline-flex items-center">
             <WalletButton variant="default" />
           </div>
@@ -375,6 +387,10 @@ export function Navigation() {
                   Create Blink
                 </Button>
               </Link>
+
+              {/* Tier Badge Widget (mobile) */}
+              {authenticated && <TierBadgeWidget variant="mobile" />}
+
               <WalletButton variant="mobile" />
 
               {/* Mobile Social Icons */}

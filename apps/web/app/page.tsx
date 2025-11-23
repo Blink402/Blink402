@@ -6,7 +6,7 @@ import FeaturedCarousel from "@/components/FeaturedCarousel"
 import TrendingBlinks from "@/components/TrendingBlinks"
 import NeonDivider from "@/components/NeonDivider"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
-import { HomeSlotMachine } from "@/components/HomeSlotMachine"
+import { SavingsCalculator } from "@/components/SavingsCalculator"
 
 // Fetch featured and trending blinks on the server
 async function getFeaturedBlinks(): Promise<BlinkData[]> {
@@ -54,6 +54,11 @@ export default async function Home() {
     <main className="min-h-screen">
       {/* Hero Section - Client Component for animations */}
       <HomeClient />
+
+      {/* B402 Savings Calculator */}
+      <SavingsCalculator />
+
+      <NeonDivider className="max-w-6xl mx-auto" />
 
       {/* Featured Demos Section */}
       {featuredBlinks.length > 0 && (
@@ -356,32 +361,66 @@ export default async function Home() {
 
       <NeonDivider className="max-w-6xl mx-auto" />
 
-      {/* Try Our Advanced Tech Section */}
+      {/* Popular Use Cases Preview */}
       <section className="px-4 sm:px-6 py-16 sm:py-20">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-sans font-light text-neon-white mb-4">
-              Try Our Advanced Tech
+              Turn Any API Into Revenue
             </h2>
-            <p className="text-neon-grey font-mono text-sm mb-2">
-              Experience the power of x402 payment-gated interactions right here
-            </p>
-            <p className="text-neon-grey font-mono text-xs">
-              Play our Lucky Slot Machine - pay 0.10 USDC for a chance to win up to 50x!
+            <p className="text-neon-grey font-mono text-sm">
+              From AI models to data feeds, gate access to any HTTP endpoint with micro-payments
             </p>
           </div>
 
-          <div className="relative">
-            <HomeSlotMachine />
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            {/* AI & ML */}
+            <Link href="/use-cases" className="group">
+              <div className="h-full p-6 rounded-lg border-2 border-dashed border-[--neon-grey]/30 bg-[--neon-dark] hover:border-[--neon-blue-light]/60 transition-all hover:scale-[1.02]">
+                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🤖</div>
+                <h3 className="text-xl font-sans font-light text-[--neon-white] mb-2">AI & Machine Learning</h3>
+                <p className="text-[--neon-grey] font-mono text-xs mb-4">
+                  GPT-4, image generation, text-to-speech, sentiment analysis
+                </p>
+                <div className="text-[--neon-blue-light] font-mono text-xs">
+                  From $0.10/call →
+                </div>
+              </div>
+            </Link>
+
+            {/* Data & Analytics */}
+            <Link href="/use-cases" className="group">
+              <div className="h-full p-6 rounded-lg border-2 border-dashed border-[--neon-grey]/30 bg-[--neon-dark] hover:border-[--neon-blue-light]/60 transition-all hover:scale-[1.02]">
+                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">📊</div>
+                <h3 className="text-xl font-sans font-light text-[--neon-white] mb-2">Data & Analytics</h3>
+                <p className="text-[--neon-grey] font-mono text-xs mb-4">
+                  Crypto prices, stock data, weather APIs, NFT analytics
+                </p>
+                <div className="text-[--neon-blue-light] font-mono text-xs">
+                  From $0.05/query →
+                </div>
+              </div>
+            </Link>
+
+            {/* Developer Tools */}
+            <Link href="/use-cases" className="group">
+              <div className="h-full p-6 rounded-lg border-2 border-dashed border-[--neon-grey]/30 bg-[--neon-dark] hover:border-[--neon-blue-light]/60 transition-all hover:scale-[1.02]">
+                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🛠️</div>
+                <h3 className="text-xl font-sans font-light text-[--neon-white] mb-2">Developer Tools</h3>
+                <p className="text-[--neon-grey] font-mono text-xs mb-4">
+                  Code generation, API testing, database queries, screenshots
+                </p>
+                <div className="text-[--neon-blue-light] font-mono text-xs">
+                  From $0.15/request →
+                </div>
+              </div>
+            </Link>
           </div>
 
-          <div className="mt-8 text-center">
-            <p className="text-neon-grey font-mono text-xs mb-4">
-              This slot machine is powered by Blink402&apos;s x402 payment protocol
-            </p>
-            <Link href="/slot-machine">
-              <button className="btn-ghost text-neon-blue-light border-neon-blue-dark/50 hover:border-neon-blue-light text-sm">
-                View Full Slot Machine Page →
+          <div className="text-center">
+            <Link href="/use-cases">
+              <button className="btn-ghost text-[--neon-blue-light] border-[--neon-blue-dark]/50 hover:border-[--neon-blue-light]">
+                Explore All Use Cases →
               </button>
             </Link>
           </div>

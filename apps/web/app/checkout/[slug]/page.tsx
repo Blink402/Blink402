@@ -7,7 +7,7 @@ import {
   PublicKey,
   VersionedTransaction,
 } from "@solana/web3.js"
-import { buildUsdcPaymentTransaction } from "@blink402/solana"
+import { buildUsdcPaymentTransaction, applyB402Discount, getB402HolderTier, getTierDisplayInfo, type TokenHolderTier } from "@blink402/solana"
 import NeonDivider from "@/components/NeonDivider"
 import Lottie from "@/components/Lottie"
 import { Card } from "@/components/ui/card"
@@ -87,6 +87,12 @@ function CheckoutPageContent() {
   const [lastReference, setLastReference] = useState<string | null>(null)
   const [isCheckingStatus, setIsCheckingStatus] = useState(false)
 
+  // B402 token holder state
+  const [b402Tier, setB402Tier] = useState<TokenHolderTier>('NONE')
+  const [finalPrice, setFinalPrice] = useState<number>(0)
+  const [savings, setSavings] = useState(0)
+  const [discountPercent, setDiscountPercent] = useState(0)
+
   useEffect(() => {
     // Fetch blink data from API
     if (slug) {
@@ -162,6 +168,51 @@ function CheckoutPageContent() {
       setIsLoading(false)
     }
   }, [slug, searchParams])
+
+  // Fetch B402 holder tier and apply discount when wallet connects and blink loads
+  useEffect(() => {
+    const fetchB402Discount = async () => {
+      if (!connected || !connectedWallet || !blink) {
+        // Reset to no tier if wallet disconnects or no blink
+        setB402Tier('NONE')
+        setFinalPrice(blink ? Number(blink.price_usdc) : 0)
+        setSavings(0)
+        setDiscountPercent(0)
+        return
+      }
+
+      const basePrice = Number(blink.price_usdc)
+
+      try {
+        logger.info('Fetching B402 holder tier for wallet:', connectedWallet)
+
+        // Get tier and apply discount
+        const discount = await applyB402Discount(basePrice, connectedWallet, 'blinks')
+
+        logger.info('B402 blink discount applied:', {
+          tier: discount.tier,
+          originalPrice: discount.originalPrice,
+          discountedPrice: discount.discountedPrice,
+          savings: discount.savings,
+          discountPercent: discount.discountPercent
+        })
+
+        setB402Tier(discount.tier)
+        setFinalPrice(discount.discountedPrice)
+        setSavings(discount.savings)
+        setDiscountPercent(discount.discountPercent)
+      } catch (err) {
+        logger.error('Failed to fetch B402 tier:', err)
+        // Fail gracefully - use base price
+        setB402Tier('NONE')
+        setFinalPrice(basePrice)
+        setSavings(0)
+        setDiscountPercent(0)
+      }
+    }
+
+    fetchB402Discount()
+  }, [connected, connectedWallet, blink])
 
   // Update state when wallet connects/disconnects
   useEffect(() => {
@@ -243,7 +294,14 @@ function CheckoutPageContent() {
         throw new Error(`Invalid merchant address for this blink: ${blink.payout_wallet}. Please contact the blink creator.`)
       }
 
-      const amountUsdc = Number(blink.price_usdc) // Ensure it's a number
+      const amountUsdc = finalPrice || Number(blink.price_usdc) // Use discounted price if B402 holder, fallback to base price
+
+      logger.info('Building payment transaction with B402 discount:', {
+        originalPrice: Number(blink.price_usdc),
+        finalPrice: amountUsdc,
+        tier: b402Tier,
+        savings: savings
+      })
 
       // Build USDC payment transaction using shared utility
       // This creates a VersionedTransaction with exactly 3 instructions:
@@ -571,9 +629,19 @@ function CheckoutPageContent() {
                 <div className="space-y-2 sm:space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-neon-grey font-mono text-xs sm:text-sm">Price</span>
-                    <span className="text-neon-white font-mono font-bold text-sm sm:text-base">
-                      ${blink.price_usdc} USDC
-                    </span>
+                    {savings > 0 ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-neon-grey font-mono text-xs line-through">${blink.price_usdc}</span>
+                        <span className="text-neon-white font-mono font-bold text-sm sm:text-base">
+                          ${finalPrice.toFixed(2)} USDC
+                        </span>
+                        <span className="text-green-400 font-mono text-xs">(-{discountPercent}%)</span>
+                      </div>
+                    ) : (
+                      <span className="text-neon-white font-mono font-bold text-sm sm:text-base">
+                        ${blink.price_usdc} USDC
+                      </span>
+                    )}
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-neon-grey font-mono text-xs sm:text-sm">Network</span>
@@ -706,6 +774,21 @@ function CheckoutPageContent() {
 
             {/* Right: Payment Status & Actions */}
             <div className="space-y-4 sm:space-y-6">
+              {/* B402 Tier Badge */}
+              {connected && b402Tier !== 'NONE' && (
+                <Card className="bg-green-900/20 border-green-500/60 p-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{getTierDisplayInfo(b402Tier).icon}</span>
+                    <div className="flex-1">
+                      <div className="text-green-400 font-mono text-sm font-bold">{getTierDisplayInfo(b402Tier).label}</div>
+                      <div className="text-green-300 font-mono text-xs">
+                        {savings > 0 && `Save ${savings.toFixed(4)} USDC with your ${discountPercent}% discount!`}
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              )}
+
               {/* Wallet Status */}
               {!connected && (
                 <Alert className="bg-neon-blue-dark/10 border-neon-blue-dark/30">
@@ -912,9 +995,19 @@ function CheckoutPageContent() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-neon-white font-mono text-sm sm:text-base">Total</span>
-                      <span className="text-neon-blue-light font-mono font-bold text-xl sm:text-2xl">
-                        ${blink.price_usdc}
-                      </span>
+                      {savings > 0 ? (
+                        <div className="text-right">
+                          <div className="text-neon-grey font-mono text-xs line-through">${blink.price_usdc}</div>
+                          <div className="text-neon-blue-light font-mono font-bold text-xl sm:text-2xl">
+                            ${finalPrice.toFixed(2)}
+                          </div>
+                          <div className="text-green-400 font-mono text-xs">Save ${savings.toFixed(4)}</div>
+                        </div>
+                      ) : (
+                        <span className="text-neon-blue-light font-mono font-bold text-xl sm:text-2xl">
+                          ${finalPrice > 0 ? finalPrice.toFixed(2) : blink.price_usdc}
+                        </span>
+                      )}
                     </div>
 
                     <NeonDivider />
@@ -929,7 +1022,7 @@ function CheckoutPageContent() {
                           onClick={handlePay}
                           className="w-full bg-neon-blue-dark hover:bg-neon-blue-light font-mono text-sm sm:text-base h-11 sm:h-12"
                         >
-                          Pay ${blink.price_usdc} USDC
+                          Pay ${finalPrice > 0 ? finalPrice.toFixed(2) : blink.price_usdc} USDC{savings > 0 ? ` (-${discountPercent}%)` : ''}
                         </Button>
                       )}
 

@@ -22,6 +22,7 @@ import {
   getAccount,
 } from '@solana/spl-token'
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { applyB402Discount, getB402HolderTier, getTierDisplayInfo, type TokenHolderTier } from "@blink402/solana"
 
 // Use relative path to leverage Next.js rewrites (proxied to API backend)
 const API_BASE_URL = ''
@@ -52,6 +53,13 @@ export default function SlotMachinePage() {
   const [xPaymentHeader, setXPaymentHeader] = useState<string | null>(null)
   const [isSpinning, setIsSpinning] = useState(false)
   const [blink, setBlink] = useState<BlinkData | null>(null)
+
+  // B402 token holder state
+  const [b402Tier, setB402Tier] = useState<TokenHolderTier>('NONE')
+  const [basePrice] = useState(0.10) // Original price: 0.10 USDC
+  const [finalPrice, setFinalPrice] = useState(0.10)
+  const [savings, setSavings] = useState(0)
+  const [discountPercent, setDiscountPercent] = useState(0)
 
   // Get wallet address (same pattern as checkout page)
   const wallet = wallets[0]
@@ -100,6 +108,49 @@ export default function SlotMachinePage() {
       linkedAccounts: user?.linkedAccounts,
     })
   }, [ready, authenticated, wallets, connectedWallet, connected, user])
+
+  // Fetch B402 holder tier and apply discount when wallet connects
+  useEffect(() => {
+    const fetchB402Discount = async () => {
+      if (!connected || !connectedWallet) {
+        // Reset to no tier if wallet disconnects
+        setB402Tier('NONE')
+        setFinalPrice(basePrice)
+        setSavings(0)
+        setDiscountPercent(0)
+        return
+      }
+
+      try {
+        console.log('Fetching B402 holder tier for wallet:', connectedWallet)
+
+        // Get tier and apply discount
+        const discount = await applyB402Discount(basePrice, connectedWallet, 'slotMachine')
+
+        console.log('B402 discount applied:', {
+          tier: discount.tier,
+          originalPrice: discount.originalPrice,
+          discountedPrice: discount.discountedPrice,
+          savings: discount.savings,
+          discountPercent: discount.discountPercent
+        })
+
+        setB402Tier(discount.tier)
+        setFinalPrice(discount.discountedPrice)
+        setSavings(discount.savings)
+        setDiscountPercent(discount.discountPercent)
+      } catch (err) {
+        console.error('Failed to fetch B402 tier:', err)
+        // Fail gracefully - use base price
+        setB402Tier('NONE')
+        setFinalPrice(basePrice)
+        setSavings(0)
+        setDiscountPercent(0)
+      }
+    }
+
+    fetchB402Discount()
+  }, [connected, connectedWallet, basePrice])
 
   useEffect(() => {
     mountScramble()
@@ -186,9 +237,12 @@ export default function SlotMachinePage() {
 
       console.log('Building transaction for merchant:', {
         merchant: merchant.toBase58(),
-        amount: '0.10 USDC'
+        amount: `${finalPrice} USDC`,
+        originalAmount: `${basePrice} USDC`,
+        tier: b402Tier,
+        savings: savings
       })
-      const amountUsdc = 0.10
+      const amountUsdc = finalPrice // Use discounted price if B402 holder
       const amountAtomic = BigInt(Math.round(amountUsdc * 1_000_000))
 
       // Get token accounts
@@ -421,7 +475,15 @@ export default function SlotMachinePage() {
             <div className="flex items-center justify-center gap-4 flex-wrap text-sm">
               <div className="flex items-center gap-2">
                 <span className="font-sans text-[--neon-grey]">Cost:</span>
-                <span className="text-[--neon-blue-light] font-mono font-bold">0.10 USDC</span>
+                {savings > 0 ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-[--neon-grey] font-mono line-through">{basePrice.toFixed(2)} USDC</span>
+                    <span className="text-[--neon-blue-light] font-mono font-bold">{finalPrice.toFixed(2)} USDC</span>
+                    <span className="text-green-400 font-mono text-xs">(-{discountPercent}%)</span>
+                  </div>
+                ) : (
+                  <span className="text-[--neon-blue-light] font-mono font-bold">{finalPrice.toFixed(2)} USDC</span>
+                )}
               </div>
               <span className="text-[--neon-grey]">•</span>
               <div className="flex items-center gap-2">
@@ -429,6 +491,19 @@ export default function SlotMachinePage() {
                 <span className="text-[--neon-blue-light] font-mono font-bold">5.0 USDC</span>
               </div>
             </div>
+
+            {/* B402 Tier Badge */}
+            {connected && b402Tier !== 'NONE' && (
+              <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-dashed border-green-500/60 bg-green-900/20">
+                <span className="text-2xl">{getTierDisplayInfo(b402Tier).icon}</span>
+                <div className="text-left">
+                  <div className="text-green-400 font-mono text-sm font-bold">{getTierDisplayInfo(b402Tier).label}</div>
+                  <div className="text-green-300 font-mono text-xs">
+                    {savings > 0 && `Save ${savings.toFixed(4)} USDC per spin!`}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <NeonDivider />
@@ -567,7 +642,7 @@ export default function SlotMachinePage() {
                         Processing...
                       </span>
                     ) : authenticated ? (
-                      '💰 PAY 0.10 USDC & PLAY'
+                      `💰 PAY ${finalPrice.toFixed(2)} USDC & PLAY${savings > 0 ? ` (${discountPercent}% OFF!)` : ''}`
                     ) : (
                       '🎰 CONNECT WALLET'
                     )}

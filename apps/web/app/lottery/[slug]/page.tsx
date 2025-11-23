@@ -16,6 +16,7 @@ import {
   getAccount,
 } from "@solana/spl-token"
 import { cn } from "@/lib/utils"
+import { applyB402Discount, getB402HolderTier, getTierDisplayInfo, type TokenHolderTier } from "@blink402/solana"
 
 // Solana configuration
 const USDC_MINT = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") // Mainnet USDC
@@ -79,10 +80,16 @@ export default function LotteryPage() {
   const [timeRemaining, setTimeRemaining] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const [entryPrice, setEntryPrice] = useState<number>(1.0) // Default 1 USDC
+  const [entryPrice, setEntryPrice] = useState<number>(1.0) // Default 1 USDC (base price)
   const [waitingForFirstEntry, setWaitingForFirstEntry] = useState(false)
   const [blinkData, setBlinkData] = useState<any>(null) // Store blink metadata including payout_wallet
   const [totalB402Bought, setTotalB402Bought] = useState<string>("0")
+
+  // B402 token holder state
+  const [b402Tier, setB402Tier] = useState<TokenHolderTier>('NONE')
+  const [finalPrice, setFinalPrice] = useState<number>(1.0)
+  const [savings, setSavings] = useState(0)
+  const [discountPercent, setDiscountPercent] = useState(0)
 
   // Fetch current round
   const fetchCurrentRound = async () => {
@@ -152,6 +159,49 @@ export default function LotteryPage() {
     }
   }
 
+  // Fetch B402 holder tier and apply discount when wallet connects
+  useEffect(() => {
+    const fetchB402Discount = async () => {
+      if (!connected || !connectedWallet) {
+        // Reset to no tier if wallet disconnects
+        setB402Tier('NONE')
+        setFinalPrice(entryPrice)
+        setSavings(0)
+        setDiscountPercent(0)
+        return
+      }
+
+      try {
+        console.log('Fetching B402 holder tier for wallet:', connectedWallet)
+
+        // Get tier and apply discount
+        const discount = await applyB402Discount(entryPrice, connectedWallet, 'lottery')
+
+        console.log('B402 lottery discount applied:', {
+          tier: discount.tier,
+          originalPrice: discount.originalPrice,
+          discountedPrice: discount.discountedPrice,
+          savings: discount.savings,
+          discountPercent: discount.discountPercent
+        })
+
+        setB402Tier(discount.tier)
+        setFinalPrice(discount.discountedPrice)
+        setSavings(discount.savings)
+        setDiscountPercent(discount.discountPercent)
+      } catch (err) {
+        console.error('Failed to fetch B402 tier:', err)
+        // Fail gracefully - use base price
+        setB402Tier('NONE')
+        setFinalPrice(entryPrice)
+        setSavings(0)
+        setDiscountPercent(0)
+      }
+    }
+
+    fetchB402Discount()
+  }, [connected, connectedWallet, entryPrice])
+
   // Initial load
   useEffect(() => {
     fetchCurrentRound()
@@ -211,7 +261,12 @@ export default function LotteryPage() {
         )
       }
 
-      console.log("Building USDC transfer transaction...")
+      console.log("Building USDC transfer transaction with B402 discount...", {
+        originalPrice: entryPrice,
+        finalPrice: finalPrice,
+        tier: b402Tier,
+        savings: savings
+      })
 
       // Setup Solana connection
       const connection = new Connection(
@@ -220,7 +275,7 @@ export default function LotteryPage() {
       )
 
       const payer = solana.publicKey
-      const amountUsdc = entryPrice
+      const amountUsdc = finalPrice // Use discounted price if B402 holder
       const amountAtomic = BigInt(Math.round(amountUsdc * 1_000_000))
 
       // Get payout wallet from blink data
@@ -482,6 +537,21 @@ export default function LotteryPage() {
             </div>
           )}
 
+          {/* B402 Tier Badge */}
+          {authenticated && b402Tier !== 'NONE' && (
+            <div className="bg-green-900/20 border-2 border-dashed border-green-500/60 p-4 rounded-lg">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">{getTierDisplayInfo(b402Tier).icon}</span>
+                <div className="flex-1">
+                  <div className="text-green-400 font-mono text-base font-bold">{getTierDisplayInfo(b402Tier).label}</div>
+                  <div className="text-green-300 font-mono text-sm">
+                    {savings > 0 && `${discountPercent}% discount • Save ${savings.toFixed(2)} USDC per entry!`}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Entry Button */}
           <button
             onClick={handleEnter}
@@ -493,7 +563,15 @@ export default function LotteryPage() {
               "disabled:opacity-50 disabled:cursor-not-allowed"
             )}
           >
-            {entering ? "Processing..." : authenticated ? `Buy Entry (${entryPrice} USDC)` : "Connect Wallet to Enter"}
+            {entering ? "Processing..." : authenticated ? (
+              savings > 0 ? (
+                <>
+                  Buy Entry ({finalPrice.toFixed(2)} USDC) <span className="text-green-400 ml-2">-{discountPercent}%!</span>
+                </>
+              ) : (
+                `Buy Entry (${finalPrice.toFixed(2)} USDC)`
+              )
+            ) : "Connect Wallet to Enter"}
           </button>
 
           {/* B402 Buyback Stats */}

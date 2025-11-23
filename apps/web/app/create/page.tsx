@@ -2,7 +2,6 @@
 import { Suspense, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import type { EndpointSuggestion } from "@blink402/types"
 import { mountReveals } from "@/lib/reveal"
 import { mountScramble } from "@/lib/scramble"
@@ -25,65 +24,8 @@ import { HelpTooltip } from "@/components/HelpTooltip"
 import { FormHelp } from "@/components/FormHelp"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-
-// Zod schema for form validation
-const blinkSchema = z.object({
-  // Step 1: Endpoint Configuration
-  endpoint_url: z.string().min(1, "API endpoint URL is required").url("Must be a valid URL"),
-  method: z.enum(["GET", "POST", "PUT", "DELETE"], {
-    required_error: "Please select an HTTP method",
-  }),
-  title: z.string().min(3, "Title must be at least 3 characters").max(50, "Title must be at most 50 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters").max(200, "Description must be at most 200 characters"),
-  category: z.enum(["AI/ML", "Utilities", "Data", "API Tools", "Web3"]),
-
-  // Step 2: Payment Mode & Pricing
-  payment_mode: z.enum(["charge", "reward"], {
-    required_error: "Please select a payment mode",
-  }),
-  payment_token: z.enum(["USDC", "SOL"], {
-    required_error: "Please select a payment token",
-  }).default("USDC"), // Default to USDC (required for PayAI x402)
-  price_usdc: z.string()
-    .refine(
-      (val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0,
-      { message: "Price must be a positive number" }
-    ),
-  payout_wallet: z.string()
-    .min(32, "Wallet address is too short")
-    .max(44, "Wallet address is too long")
-    .regex(/^[1-9A-HJ-NP-Za-km-z]{32,44}$/, "Invalid Solana wallet address"),
-
-  // Reward mode fields
-  reward_amount: z.string().optional(),
-  funded_wallet: z.string().optional(),
-  max_claims_per_user: z.string().optional(),
-
-  // Step 3: Optional fields
-  icon_url: z.string().url().optional().or(z.literal("")),
-  example_request: z.string().optional(),
-  parameters: z.string().optional(), // JSON string defining input parameters for Solana Actions
-}).refine(
-  (data) => {
-    // If payment_mode is reward, validate reward fields
-    if (data.payment_mode === "reward") {
-      return !!(data.reward_amount && data.funded_wallet && data.max_claims_per_user)
-    }
-    return true
-  },
-  {
-    message: "Reward mode requires reward_amount, funded_wallet, and max_claims_per_user",
-    path: ["payment_mode"],
-  }
-)
-
-type BlinkFormData = z.infer<typeof blinkSchema>
-
-const STEPS = [
-  { id: 1, title: "Endpoint Config", description: "Configure your API endpoint" },
-  { id: 2, title: "Pricing & Wallet", description: "Set price and payout details" },
-  { id: 3, title: "Preview & Publish", description: "Review and create your Blink" },
-]
+import { blinkSchema, type BlinkFormData, STEPS } from "./schema"
+import { CreateBlinkStepper, StepNavigation } from "./components"
 
 function CreateBlinkPageContent() {
   const router = useRouter()
@@ -99,18 +41,6 @@ function CreateBlinkPageContent() {
   const wallet = (solanaAccount as any)?.address || walletFromArray?.address
   const isAuthenticated = authenticated && !!wallet
 
-  // Debug wallet connection
-  useEffect(() => {
-    if (ready && authenticated) {
-      console.log('🔍 Create page - Wallet detection:', {
-        authenticated,
-        walletsCount: wallets.length,
-        connectedWallet: wallet,
-        walletType: walletFromArray?.walletClientType,
-        hasSolanaAccount: !!solanaAccount
-      })
-    }
-  }, [ready, authenticated, wallets, wallet, walletFromArray, solanaAccount])
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
@@ -580,48 +510,7 @@ function CreateBlinkPageContent() {
           )}
 
           {/* Progress Stepper */}
-          <div data-reveal data-stepper className="mb-12">
-            <div className="flex items-center justify-between relative">
-              {STEPS.map((step, index) => (
-                <div key={step.id} className="flex-1 relative">
-                  <div className="flex items-center">
-                    <div
-                      className={`
-                        w-12 h-12 rounded-full flex items-center justify-center font-mono font-bold
-                        ${
-                          currentStep === step.id
-                            ? "bg-neon-blue-dark text-neon-black"
-                            : currentStep > step.id
-                            ? "bg-neon-blue-dark/30 text-neon-blue-light border border-neon-blue-dark"
-                            : "bg-neon-dark text-neon-grey border border-neon-grey/30"
-                        }
-                      `}
-                    >
-                      {currentStep > step.id ? "✓" : step.id}
-                    </div>
-
-                    {index < STEPS.length - 1 && (
-                      <div
-                        className={`
-                          flex-1 h-0.5 mx-2
-                          ${currentStep > step.id ? "bg-neon-blue-dark" : "bg-neon-grey/30"}
-                        `}
-                      />
-                    )}
-                  </div>
-                  
-                  <div className="mt-3">
-                    <div className={`font-mono text-sm ${currentStep >= step.id ? "text-neon-white" : "text-neon-grey"}`}>
-                      {step.title}
-                    </div>
-                    <div className="font-mono text-xs text-neon-grey mt-1">
-                      {step.description}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <CreateBlinkStepper currentStep={currentStep} />
 
           {/* Form */}
           <Card data-reveal className="bg-neon-dark border-neon-blue-dark/20 p-8">
@@ -1178,30 +1067,13 @@ function CreateBlinkPageContent() {
               )}
 
               {/* Navigation Buttons */}
-              <div className="flex justify-between mt-8">
-                <Button
-                  type="button"
-                  onClick={handleBack}
-                  disabled={currentStep === 1}
-                  className="btn-ghost"
-                >
-                  ← Back
-                </Button>
-
-                {currentStep < 3 ? (
-                  <Button type="button" onClick={handleNext} className="btn-primary">
-                    Next →
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="btn-primary"
-                  >
-                    {isSubmitting ? "Creating..." : "Create Blink"}
-                  </Button>
-                )}
-              </div>
+              <StepNavigation
+                currentStep={currentStep}
+                totalSteps={3}
+                isSubmitting={isSubmitting}
+                onBack={handleBack}
+                onNext={handleNext}
+              />
             </form>
           </Card>
         </div>

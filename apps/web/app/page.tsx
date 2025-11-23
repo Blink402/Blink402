@@ -7,6 +7,7 @@ import TrendingBlinks from "@/components/TrendingBlinks"
 import NeonDivider from "@/components/NeonDivider"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { SavingsCalculator } from "@/components/SavingsCalculator"
+import { BarChart3, Zap, Shield, Bot, Code2, Check, X } from "lucide-react"
 
 // Fetch featured and trending blinks on the server
 async function getFeaturedBlinks(): Promise<BlinkData[]> {
@@ -62,7 +63,7 @@ export default async function Home() {
 
       {/* Featured Demos Section */}
       {featuredBlinks.length > 0 && (
-      <section className="px-4 sm:px-6 section-padding">
+        <section className="px-4 sm:px-6 section-padding">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-sans font-light text-neon-white mb-4">
@@ -81,7 +82,7 @@ export default async function Home() {
 
       {/* Trending Today Section */}
       {trendingBlinks.length > 0 && (
-      <section className="px-4 sm:px-6 section-padding">
+        <section className="px-4 sm:px-6 section-padding">
           <TrendingBlinks blinks={trendingBlinks} />
         </section>
       )}
@@ -154,7 +155,7 @@ export default async function Home() {
           {/* Safety Note */}
           <div data-reveal className="mt-16 text-center">
             <p className="text-neon-grey font-mono text-sm mb-3">
-              <span className="text-neon-blue-light">✓</span> Blink402 verifies payment on-chain before executing your API.
+              <span className="text-neon-blue-light inline-block mr-2"><Check className="w-4 h-4 inline" /></span> Blink402 verifies payment on-chain before executing your API.
             </p>
             <p className="text-neon-grey/70 font-mono text-xs">
               Built on Solana&apos;s x402 protocol with PayAI for instant settlement
@@ -186,23 +187,23 @@ export default async function Home() {
               </div>
               <ul className="space-y-4 text-sm font-mono">
                 <li className="flex items-start gap-3">
-                  <span className="text-green-400 mt-0.5">✓</span>
+                  <Check className="w-4 h-4 text-green-400 mt-0.5" />
                   <span className="text-neon-white"><strong>2.1s</strong> average settlement time</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-green-400 mt-0.5">✓</span>
+                  <Check className="w-4 h-4 text-green-400 mt-0.5" />
                   <span className="text-neon-white"><strong>Zero chargebacks</strong> (on-chain finality)</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-green-400 mt-0.5">✓</span>
+                  <Check className="w-4 h-4 text-green-400 mt-0.5" />
                   <span className="text-neon-white"><strong>Pennies per transaction</strong> (USDC/SOL)</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-green-400 mt-0.5">✓</span>
+                  <Check className="w-4 h-4 text-green-400 mt-0.5" />
                   <span className="text-neon-white"><strong>No user accounts</strong> required</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-green-400 mt-0.5">✓</span>
+                  <Check className="w-4 h-4 text-green-400 mt-0.5" />
                   <span className="text-neon-white"><strong>99.9% uptime</strong> with auto-failover</span>
                 </li>
               </ul>
@@ -215,23 +216,23 @@ export default async function Home() {
               </div>
               <ul className="space-y-4 text-sm font-mono">
                 <li className="flex items-start gap-3">
-                  <span className="text-red-400 mt-0.5">✗</span>
+                  <X className="w-4 h-4 text-red-400 mt-0.5" />
                   <span className="text-neon-white/80"><strong className="text-red-400">2-7 days</strong> settlement delay</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-red-400 mt-0.5">✗</span>
+                  <X className="w-4 h-4 text-red-400 mt-0.5" />
                   <span className="text-neon-white/80"><strong className="text-red-400">Chargeback risk</strong> (fraud, disputes)</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-red-400 mt-0.5">✗</span>
+                  <X className="w-4 h-4 text-red-400 mt-0.5" />
                   <span className="text-neon-white/80"><strong className="text-red-400">2.9% + $0.30</strong> per transaction</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-red-400 mt-0.5">✗</span>
+                  <X className="w-4 h-4 text-red-400 mt-0.5" />
                   <span className="text-neon-white/80"><strong className="text-red-400">Account creation</strong> friction</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-red-400 mt-0.5">✗</span>
+                  <X className="w-4 h-4 text-red-400 mt-0.5" />
                   <span className="text-neon-white/80"><strong className="text-red-400">Single point of failure</strong></span>
                 </li>
               </ul>
@@ -286,7 +287,7 @@ export default async function Home() {
             {/* Pricing FAQ Card 1 */}
             <div className="bg-neon-dark/20 border border-neon-blue-dark/30 rounded-lg p-6">
               <div className="flex items-start gap-3 mb-3">
-                <span className="text-neon-blue-light text-xl">💰</span>
+                <span className="text-neon-blue-light"><Zap className="w-6 h-6" /></span>
                 <h3 className="text-lg font-mono text-neon-white">What does it cost?</h3>
               </div>
               <p className="text-neon-grey font-mono text-sm leading-relaxed">
@@ -298,7 +299,7 @@ export default async function Home() {
             {/* Pricing FAQ Card 2 */}
             <div className="bg-neon-dark/20 border border-neon-blue-dark/30 rounded-lg p-6">
               <div className="flex items-start gap-3 mb-3">
-                <span className="text-neon-blue-light text-xl">🔓</span>
+                <span className="text-neon-blue-light"><Shield className="w-6 h-6" /></span>
                 <h3 className="text-lg font-mono text-neon-white">Do buyers need an account?</h3>
               </div>
               <p className="text-neon-grey font-mono text-sm leading-relaxed">
@@ -310,7 +311,7 @@ export default async function Home() {
             {/* Pricing FAQ Card 3 */}
             <div className="bg-neon-dark/20 border border-neon-blue-dark/30 rounded-lg p-6">
               <div className="flex items-start gap-3 mb-3">
-                <span className="text-neon-blue-light text-xl">⚡</span>
+                <span className="text-neon-blue-light"><Zap className="w-6 h-6" /></span>
                 <h3 className="text-lg font-mono text-neon-white">How fast do I get paid?</h3>
               </div>
               <p className="text-neon-grey font-mono text-sm leading-relaxed">
@@ -322,7 +323,7 @@ export default async function Home() {
             {/* Pricing FAQ Card 4 */}
             <div className="bg-neon-dark/20 border border-neon-blue-dark/30 rounded-lg p-6">
               <div className="flex items-start gap-3 mb-3">
-                <span className="text-neon-blue-light text-xl">🛡️</span>
+                <span className="text-neon-blue-light"><Shield className="w-6 h-6" /></span>
                 <h3 className="text-lg font-mono text-neon-white">Are there hidden fees?</h3>
               </div>
               <p className="text-neon-grey font-mono text-sm leading-relaxed">
@@ -335,23 +336,23 @@ export default async function Home() {
           {/* Trust Signals */}
           <div className="mt-12 grid md:grid-cols-3 gap-4 text-center">
             <div className="flex flex-col items-center gap-2">
-              <span className="text-green-400 text-2xl">✓</span>
+              <Check className="w-6 h-6 text-green-400" />
               <p className="text-neon-grey font-mono text-xs">
-                <strong className="text-neon-white">No platform fees</strong><br/>
+                <strong className="text-neon-white">No platform fees</strong><br />
                 You keep 100% of earnings
               </p>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-green-400 text-2xl">✓</span>
+              <Check className="w-6 h-6 text-green-400" />
               <p className="text-neon-grey font-mono text-xs">
-                <strong className="text-neon-white">No contracts</strong><br/>
+                <strong className="text-neon-white">No contracts</strong><br />
                 Cancel or modify anytime
               </p>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-green-400 text-2xl">✓</span>
+              <Check className="w-6 h-6 text-green-400" />
               <p className="text-neon-grey font-mono text-xs">
-                <strong className="text-neon-white">No minimums</strong><br/>
+                <strong className="text-neon-white">No minimums</strong><br />
                 Withdraw earnings anytime
               </p>
             </div>
@@ -377,7 +378,7 @@ export default async function Home() {
             {/* AI & ML */}
             <Link href="/use-cases" className="group">
               <div className="h-full p-6 rounded-lg border-2 border-dashed border-[--neon-grey]/30 bg-[--neon-dark] hover:border-[--neon-blue-light]/60 transition-all hover:scale-[1.02]">
-                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🤖</div>
+                <div className="mb-4 group-hover:scale-110 transition-transform text-neon-blue-light"><Bot className="w-12 h-12" /></div>
                 <h3 className="text-xl font-sans font-light text-[--neon-white] mb-2">AI & Machine Learning</h3>
                 <p className="text-[--neon-grey] font-mono text-xs mb-4">
                   GPT-4, image generation, text-to-speech, sentiment analysis
@@ -391,7 +392,7 @@ export default async function Home() {
             {/* Data & Analytics */}
             <Link href="/use-cases" className="group">
               <div className="h-full p-6 rounded-lg border-2 border-dashed border-[--neon-grey]/30 bg-[--neon-dark] hover:border-[--neon-blue-light]/60 transition-all hover:scale-[1.02]">
-                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">📊</div>
+                <div className="mb-4 group-hover:scale-110 transition-transform text-neon-blue-light"><BarChart3 className="w-12 h-12" /></div>
                 <h3 className="text-xl font-sans font-light text-[--neon-white] mb-2">Data & Analytics</h3>
                 <p className="text-[--neon-grey] font-mono text-xs mb-4">
                   Crypto prices, stock data, weather APIs, NFT analytics
@@ -405,7 +406,7 @@ export default async function Home() {
             {/* Developer Tools */}
             <Link href="/use-cases" className="group">
               <div className="h-full p-6 rounded-lg border-2 border-dashed border-[--neon-grey]/30 bg-[--neon-dark] hover:border-[--neon-blue-light]/60 transition-all hover:scale-[1.02]">
-                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🛠️</div>
+                <div className="mb-4 group-hover:scale-110 transition-transform text-neon-blue-light"><Code2 className="w-12 h-12" /></div>
                 <h3 className="text-xl font-sans font-light text-[--neon-white] mb-2">Developer Tools</h3>
                 <p className="text-[--neon-grey] font-mono text-xs mb-4">
                   Code generation, API testing, database queries, screenshots
@@ -435,7 +436,7 @@ export default async function Home() {
           <div className="bg-gradient-to-br from-green-500/5 to-transparent border border-green-500/20 rounded-lg p-8">
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0 w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
-                <span className="text-green-400 text-xl">💰</span>
+                <span className="text-green-400"><Zap className="w-6 h-6" /></span>
               </div>
               <div>
                 <h2 className="text-2xl font-sans font-light text-neon-white mb-4">

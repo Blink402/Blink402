@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Connection } from "@solana/web3.js"
+import { AlertTriangle } from "lucide-react"
 import { checkUsdcAtaExists, createUsdcAtaTransaction } from "@/lib/usdc-ata"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -162,8 +163,10 @@ export function UsdcAtaChecker({
     <Alert className="bg-yellow-500/10 border-yellow-500/30">
       <AlertDescription className="text-yellow-300 font-mono text-sm">
         <div className="space-y-3">
-          <div>
-            ⚠️ Your wallet needs a USDC payment account to receive payments.
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
+            <p className="text-yellow-200 text-sm font-mono flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" /> Your wallet needs a USDC payment account to receive payments.
+            </p>
           </div>
           <div className="text-xs text-yellow-200/80">
             This is a one-time setup. All Solana wallets need this to hold USDC tokens (like a special folder for USDC).

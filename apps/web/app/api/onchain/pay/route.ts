@@ -47,57 +47,17 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Debug function to inspect payment header structure
-    function debugPaymentHeader(paymentHeader: string) {
-      const json = Buffer.from(paymentHeader, 'base64').toString('utf8');
-      console.log('[DEBUG] Decoded header JSON:', json);
-      try {
-        const parsed = JSON.parse(json);
-        console.log('[DEBUG] x402Version:', parsed.x402Version);
-        console.log('[DEBUG] scheme:', parsed.scheme);
-        console.log('[DEBUG] network:', parsed.network);
-        console.log('[DEBUG] payload keys:', Object.keys(parsed.payload || {}));
-        console.log('[DEBUG] payload.amount:', parsed.payload?.amount);
-        console.log('[DEBUG] payload.asset:', parsed.payload?.asset);
-        console.log('[DEBUG] payload.payTo:', parsed.payload?.payTo);
-        console.log('[DEBUG] payload.validUntil:', parsed.payload?.validUntil);
-        console.log('[DEBUG] payload.tx length:', parsed.payload?.tx?.length || 'N/A');
-
-        // Decode the Solana transaction to inspect instructions
-        if (parsed.payload?.tx) {
-          try {
-            const { Transaction } = require('@solana/web3.js');
-            const txBuffer = Buffer.from(parsed.payload.tx, 'base64');
-            const tx = Transaction.from(txBuffer);
-            console.log('[DEBUG] Transaction has', tx.instructions.length, 'instruction(s)');
-            tx.instructions.forEach((ix: any, i: number) => {
-              console.log(`[DEBUG] Instruction ${i + 1}: programId =`, ix.programId.toBase58());
-            });
-          } catch (txErr) {
-            console.error('[DEBUG] Failed to decode transaction:', txErr);
-          }
-        }
-
-        return parsed;
-      } catch (e) {
-        console.error('[DEBUG] Failed to parse header JSON:', e);
-        return null;
-      }
+    // Validate payment header format
+    let decodedPaymentHeader = null;
+    try {
+      const json = Buffer.from(xPaymentHeader, 'base64').toString('utf8');
+      decodedPaymentHeader = JSON.parse(json);
+    } catch (e) {
+      return NextResponse.json(
+        { error: 'Invalid X-Payment header format' },
+        { status: 400 }
+      );
     }
-
-    // Decode and debug payment header
-    const decodedPaymentHeader = debugPaymentHeader(xPaymentHeader);
-
-    console.log('[ONCHAIN] Verifying payment...', {
-      url: `${ONCHAIN_API_URL}/verify`,
-      hasApiKey: !!ONCHAIN_API_KEY,
-      sourceNetwork,
-      destinationNetwork,
-      expectedAmount,
-      expectedToken,
-      recipientAddress: recipientAddress?.substring(0, 8) + '...',
-      paymentHeaderLength: xPaymentHeader.length
-    })
 
     // Step 1: Verify payment with ONCHAIN
     // Pass X-Payment header unchanged as paymentHeader (x402 spec compliant)
@@ -120,29 +80,7 @@ export async function POST(req: NextRequest) {
 
     const verifyData = await verifyResponse.json()
 
-    console.log('[ONCHAIN] Verify response:', {
-      status: verifyResponse.status,
-      statusText: verifyResponse.statusText,
-      data: verifyData,
-      fullResponse: JSON.stringify(verifyData, null, 2)
-    })
-
-    // Log detailed error if verification fails
     if (!verifyResponse.ok) {
-      console.error('[ONCHAIN] Full error details:', {
-        status: verifyResponse.status,
-        errorData: verifyData,
-        errorMessage: verifyData?.data?.reason || verifyData?.message || 'Unknown error',
-        facilitator: verifyData?.data?.facilitator || 'none',
-        requestSent: {
-          paymentHeaderSample: xPaymentHeader.substring(0, 100) + '...',
-          sourceNetwork,
-          destinationNetwork,
-          expectedAmount,
-          expectedToken,
-          recipientAddress
-        }
-      })
       return NextResponse.json(
         {
           error: 'Payment verification failed',
@@ -153,20 +91,13 @@ export async function POST(req: NextRequest) {
     }
 
     if (!verifyData.data?.valid) {
-      console.error('[ONCHAIN] Payment invalid:', verifyData)
       return NextResponse.json(
         { error: 'Invalid payment', details: verifyData },
         { status: 402 }
       )
     }
 
-    console.log('[ONCHAIN] Payment verified ✅', {
-      facilitator: verifyData.data.facilitator,
-      from: verifyData.data.from
-    })
-
     // Step 2: Settle payment with ONCHAIN
-    console.log('[ONCHAIN] Settling payment...')
 
     const settleResponse = await fetch(`${ONCHAIN_API_URL}/settle`, {
       method: 'POST',
@@ -185,7 +116,6 @@ export async function POST(req: NextRequest) {
     const settleData = await settleResponse.json()
 
     if (!settleResponse.ok) {
-      console.error('[ONCHAIN] Settlement failed:', settleData)
       return NextResponse.json(
         {
           error: 'Payment settlement failed',
@@ -195,11 +125,6 @@ export async function POST(req: NextRequest) {
         { status: settleResponse.status }
       )
     }
-
-    console.log('[ONCHAIN] Payment settled ✅', {
-      txHash: settleData.data?.txHash,
-      facilitator: settleData.data?.facilitator
-    })
 
     // Return success
     return NextResponse.json({
@@ -214,7 +139,6 @@ export async function POST(req: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[ONCHAIN] Payment error:', error)
     return NextResponse.json(
       {
         error: 'Internal server error',

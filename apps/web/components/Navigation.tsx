@@ -369,18 +369,7 @@ export function Navigation() {
                   className="p-3 rounded-full bg-neon-dark/50 hover:bg-neon-dark transition-all group"
                   aria-label="GitHub"
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{ color: "rgba(90, 180, 255, 0.7)" }}
-                  >
-                    <path className="group-hover:stroke-neon-blue-light transition-colors" d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-                  </svg>
+                  <Github className="w-5 h-5 text-neon-blue-light/70 group-hover:text-neon-blue-light transition-colors" />
                 </Link>
                 <Link
                   href="https://t.me/blinkx402"
@@ -390,18 +379,7 @@ export function Navigation() {
                   className="p-3 rounded-full bg-neon-dark/50 hover:bg-neon-dark transition-all group"
                   aria-label="Telegram"
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{ color: "rgba(90, 180, 255, 0.7)" }}
-                  >
-                    <path className="group-hover:stroke-neon-blue-light transition-colors" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-                  </svg>
+                  <Send className="w-5 h-5 text-neon-blue-light/70 group-hover:text-neon-blue-light transition-colors -rotate-45 translate-x-0.5" />
                 </Link>
                 <Link
                   href="https://x.com/Blinkx402"
@@ -411,19 +389,7 @@ export function Navigation() {
                   className="p-3 rounded-full bg-neon-dark/50 hover:bg-neon-dark transition-all group"
                   aria-label="Twitter/X"
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{ color: "rgba(90, 180, 255, 0.7)" }}
-                  >
-                    <path className="group-hover:stroke-neon-blue-light transition-colors" d="M4 4l11.733 16h4.267l-11.733 -16z" />
-                    <path className="group-hover:stroke-neon-blue-light transition-colors" d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
-                  </svg>
+                  <Twitter className="w-5 h-5 text-neon-blue-light/70 group-hover:text-neon-blue-light transition-colors" />
                 </Link>
               </div>
             </div>

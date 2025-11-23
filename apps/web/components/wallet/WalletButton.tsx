@@ -2,6 +2,7 @@
 
 import { usePrivy, useWallets } from "@privy-io/react-auth"
 import { useState, useEffect } from "react"
+import { Wallet, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface WalletButtonProps {
@@ -117,41 +118,17 @@ export function WalletButton({ className, variant = "default" }: WalletButtonPro
       <span className="relative z-10 flex items-center justify-center gap-2">
         {!ready ? (
           <>
-            <span className="inline-block w-4 h-4 border-2 border-neon-blue-light border-t-transparent rounded-full animate-spin" />
+            <Loader2 className="w-4 h-4 animate-spin text-neon-blue-light" />
             Loading...
           </>
         ) : authenticated && walletAddress ? (
           <>
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+            <Wallet className="w-4 h-4" />
             {formatAddress(walletAddress)}
           </>
         ) : (
           <>
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
+            <Wallet className="w-4 h-4" />
             Connect Wallet
           </>
         )}

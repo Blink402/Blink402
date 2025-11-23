@@ -15,17 +15,23 @@ const config: Config = {
       },
       colors: {
         // Blink402 Neon Theme Colors - using Tailwind v4 color variable format
-        // Note: neon-grey updated to #9d9d9d for WCAG AA contrast compliance
         "neon-black": "var(--color-neon-black)",
         "neon-dark": "var(--color-neon-dark)",
+        "neon-surface": "var(--color-neon-surface)",
         "neon-grey": "var(--color-neon-grey)",
         "neon-white": "var(--color-neon-white)",
         "neon-blue-light": "var(--color-neon-blue-light)",
+        "neon-blue-primary": "var(--color-neon-blue-primary)",
         "neon-blue-dark": "var(--color-neon-blue-dark)",
-        "neon-green-light": "var(--color-neon-green-light)", // legacy alias to blue
-        "neon-green-dark": "var(--color-neon-green-dark)", // legacy alias to blue
-        neon: "var(--color-neon)", // shorthand for primary neon color
-        
+        "neon-purple": "var(--color-neon-purple)",
+        "neon-pink": "var(--color-neon-pink)",
+        "neon-cyan": "var(--color-neon-cyan)",
+
+        // Legacy aliases
+        "neon-green-light": "var(--color-neon-blue-light)",
+        "neon-green-dark": "var(--color-neon-blue-dark)",
+        neon: "var(--color-neon-blue-light)",
+
         // shadcn/ui colors
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -80,6 +86,7 @@ const config: Config = {
       },
       backgroundImage: {
         "neon-gradient": "var(--accent-gradient)",
+        "glass-gradient": "var(--glass-gradient)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -88,25 +95,32 @@ const config: Config = {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "pulse-glow": {
+          "0%, 100%": { opacity: "0.5", transform: "scale(1)" },
+          "50%": { opacity: "1", transform: "scale(1.05)" },
+        },
+        "slide-up-fade": {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        float: "float 6s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 3s ease-in-out infinite",
+        "slide-up-fade": "slide-up-fade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
       },
     },
   },

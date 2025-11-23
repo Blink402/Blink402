@@ -8,18 +8,31 @@ interface EnvConfig {
   // Database
   DATABASE_URL: string
 
+  // Redis (Optional - graceful degradation if not available)
+  REDIS_URL?: string
+  REDIS_PUBLIC_URL?: string
+
   // ONCHAIN x402 Integration
   ONCHAIN_API_KEY: string
   ONCHAIN_API_URL?: string
 
   // Solana
+  SOLANA_RPC_URL?: string // Backend RPC URL
   NEXT_PUBLIC_SOLANA_NETWORK?: string
   NEXT_PUBLIC_SOLANA_RPC_URL?: string
   NEXT_PUBLIC_USDC_MINT?: string
 
   // App URLs
-  NEXT_PUBLIC_APP_URL?: string
+  APP_URL?: string // Backend APP_URL
+  NEXT_PUBLIC_APP_URL?: string // Frontend API URL
   NEXT_PUBLIC_APP_DOMAIN?: string
+
+  // Treasury & Payments
+  TREASURY_WALLET?: string
+  PAYOUT_WALLET?: string
+
+  // API Security
+  INTERNAL_API_KEY?: string
 
   // AI Services (Optional - demos work with mock data if not provided)
   OPENAI_API_KEY?: string
@@ -45,12 +58,19 @@ const REQUIRED_ENV_VARS = [
 ] as const
 
 const OPTIONAL_ENV_VARS = [
+  'REDIS_URL',
+  'REDIS_PUBLIC_URL',
   'ONCHAIN_API_URL',
+  'SOLANA_RPC_URL',
   'NEXT_PUBLIC_SOLANA_NETWORK',
   'NEXT_PUBLIC_SOLANA_RPC_URL',
   'NEXT_PUBLIC_USDC_MINT',
+  'APP_URL',
   'NEXT_PUBLIC_APP_URL',
   'NEXT_PUBLIC_APP_DOMAIN',
+  'TREASURY_WALLET',
+  'PAYOUT_WALLET',
+  'INTERNAL_API_KEY',
   'OPENAI_API_KEY',
   'DEEPAI_API_KEY',
   'SCREENSHOT_API_KEY',
@@ -98,13 +118,20 @@ export function validateEnv(): EnvConfig {
 
   return {
     DATABASE_URL: process.env.DATABASE_URL!,
+    REDIS_URL: process.env.REDIS_URL,
+    REDIS_PUBLIC_URL: process.env.REDIS_PUBLIC_URL,
     ONCHAIN_API_KEY: process.env.ONCHAIN_API_KEY!,
     ONCHAIN_API_URL: process.env.ONCHAIN_API_URL || 'https://api.onchain.fi/v1',
+    SOLANA_RPC_URL: process.env.SOLANA_RPC_URL,
     NEXT_PUBLIC_SOLANA_NETWORK: process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'devnet',
     NEXT_PUBLIC_SOLANA_RPC_URL: process.env.NEXT_PUBLIC_SOLANA_RPC_URL,
     NEXT_PUBLIC_USDC_MINT: process.env.NEXT_PUBLIC_USDC_MINT,
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    APP_URL: process.env.APP_URL || 'http://localhost:3001',
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
     NEXT_PUBLIC_APP_DOMAIN: process.env.NEXT_PUBLIC_APP_DOMAIN || 'localhost',
+    TREASURY_WALLET: process.env.TREASURY_WALLET,
+    PAYOUT_WALLET: process.env.PAYOUT_WALLET,
+    INTERNAL_API_KEY: process.env.INTERNAL_API_KEY,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     DEEPAI_API_KEY: process.env.DEEPAI_API_KEY,
     SCREENSHOT_API_KEY: process.env.SCREENSHOT_API_KEY,
@@ -208,6 +235,70 @@ export function getAdminConfig() {
   return {
     apiKey: env.ADMIN_API_KEY,
     isEnabled: !!env.ADMIN_API_KEY
+  }
+}
+
+/**
+ * Get Redis configuration
+ * @returns Object with Redis URL (preferring REDIS_PUBLIC_URL for Railway)
+ */
+export function getRedisConfig() {
+  const env = getEnv()
+  return {
+    url: env.REDIS_PUBLIC_URL || env.REDIS_URL,
+    isEnabled: !!(env.REDIS_PUBLIC_URL || env.REDIS_URL)
+  }
+}
+
+/**
+ * Get Internal API Key configuration
+ * @returns Object with internal API key for background jobs
+ */
+export function getInternalApiConfig() {
+  const env = getEnv()
+  return {
+    apiKey: env.INTERNAL_API_KEY,
+    isEnabled: !!env.INTERNAL_API_KEY
+  }
+}
+
+/**
+ * Get Treasury/Payout Wallet configuration
+ * @returns Object with treasury and payout wallet addresses
+ */
+export function getWalletConfig() {
+  const env = getEnv()
+  return {
+    treasuryWallet: env.TREASURY_WALLET || env.PAYOUT_WALLET,
+    payoutWallet: env.PAYOUT_WALLET || env.TREASURY_WALLET,
+    isConfigured: !!(env.TREASURY_WALLET || env.PAYOUT_WALLET)
+  }
+}
+
+/**
+ * Get App URL configuration (for both backend and frontend)
+ * @returns Object with app URLs
+ */
+export function getAppUrls() {
+  const env = getEnv()
+  return {
+    appUrl: env.APP_URL || 'http://localhost:3001',
+    apiUrl: env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001',
+    domain: env.NEXT_PUBLIC_APP_DOMAIN || 'localhost'
+  }
+}
+
+/**
+ * Get Solana RPC configuration
+ * @returns Object with RPC URLs for backend and frontend
+ */
+export function getSolanaRpcConfig() {
+  const env = getEnv()
+  return {
+    backendRpcUrl: env.SOLANA_RPC_URL || env.NEXT_PUBLIC_SOLANA_RPC_URL,
+    frontendRpcUrl: env.NEXT_PUBLIC_SOLANA_RPC_URL,
+    network: env.NEXT_PUBLIC_SOLANA_NETWORK || 'devnet',
+    usdcMint: env.NEXT_PUBLIC_USDC_MINT
   }
 }
 

@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo, useCallback } from "react"
 import { getDashboardData, updateBlink } from "@/lib/api"
 import { usePrivy, useWallets } from "@privy-io/react-auth"
 import type { DashboardData } from "@/lib/types"
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select"
 import Link from "next/link"
 import { AnimatedNumber } from "@/components/AnimatedNumber"
+import { Lock, Loader2, BarChart3 } from "lucide-react"
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -175,17 +176,19 @@ export default function DashboardPage() {
     }
   }
 
-  // Filter blinks
-  const filteredBlinks = data?.blinks.filter((blink) => {
-    const matchesSearch =
-      searchQuery === "" ||
-      blink.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      blink.description.toLowerCase().includes(searchQuery.toLowerCase())
+  // Filter blinks (memoized to prevent unnecessary recalculations)
+  const filteredBlinks = useMemo(() => {
+    return data?.blinks.filter((blink) => {
+      const matchesSearch =
+        searchQuery === "" ||
+        blink.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        blink.description.toLowerCase().includes(searchQuery.toLowerCase())
 
-    const matchesStatus = statusFilter === "all" || blink.status === statusFilter
+      const matchesStatus = statusFilter === "all" || blink.status === statusFilter
 
-    return matchesSearch && matchesStatus
-  }) || []
+      return matchesSearch && matchesStatus
+    }) || []
+  }, [data?.blinks, searchQuery, statusFilter])
 
   // Show sign-in prompt if not authenticated
   if (!isAuthenticated && ready) {
@@ -193,7 +196,7 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-neon-black flex items-center justify-center">
         <div className="text-center max-w-md px-6">
           <div className="w-40 h-40 mx-auto mb-6 bg-neon-dark border border-neon-blue-dark/30 rounded-lg flex items-center justify-center">
-            <div className="text-6xl">🔒</div>
+            <Lock className="w-16 h-16 text-neon-blue-light" />
           </div>
           <h1 className="text-neon-white font-sans text-3xl mb-4">
             Creator Dashboard
@@ -224,7 +227,7 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-neon-black flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-neon-dark border border-neon-blue-dark/30 rounded-lg flex items-center justify-center">
-            <div className="text-2xl">⏳</div>
+            <Loader2 className="w-8 h-8 text-neon-blue-light animate-spin" />
           </div>
           <p className="text-neon-grey font-mono text-sm">
             {!ready ? 'Initializing...' : 'Loading dashboard...'}
@@ -423,8 +426,8 @@ export default function DashboardPage() {
                             {updatingBlinkId === blink.slug
                               ? "Updating..."
                               : blink.status === "active"
-                              ? "Pause"
-                              : "Resume"}
+                                ? "Pause"
+                                : "Resume"}
                           </button>
                         </td>
                       </tr>
@@ -436,7 +439,7 @@ export default function DashboardPage() {
               {filteredBlinks.length === 0 && (
                 <div className="p-12 text-center">
                   <div className="w-40 h-40 mx-auto mb-6 bg-neon-dark border border-neon-blue-dark/30 rounded-lg flex items-center justify-center">
-                    <div className="text-6xl">📊</div>
+                    <BarChart3 className="w-16 h-16 text-neon-blue-light" />
                   </div>
                   <p className="text-neon-grey font-mono text-sm mb-4">
                     {data.blinks.length === 0

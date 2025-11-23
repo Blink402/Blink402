@@ -3,7 +3,13 @@ const nextConfig = {
   // Use standalone for Docker/Railway, Vercel ignores this
   output: process.env.RAILWAY_ENVIRONMENT ? 'standalone' : undefined,
   images: {
-    unoptimized: true,
+    unoptimized: false,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**', // Allow all HTTPS domains for blink icons
+      },
+    ],
   },
   // Transpile workspace packages
   transpilePackages: ['@blink402/types', '@blink402/solana', '@blink402/database', '@blink402/config'],

@@ -5,6 +5,7 @@ import { UseCaseCard } from "@/components/UseCaseCard"
 import NeonDivider from "@/components/NeonDivider"
 import { mountReveals } from "@/lib/reveal"
 import { mountScramble } from "@/lib/scramble"
+import { Bot, BarChart3, Gem, Search, Gamepad2, Code2, Palette, Zap, ArrowRight } from "lucide-react"
 
 export default function UseCasesPage() {
   useEffect(() => {
@@ -14,7 +15,7 @@ export default function UseCasesPage() {
 
   const useCases = [
     {
-      icon: "🤖",
+      icon: <Bot className="w-12 h-12" />,
       title: "AI & Machine Learning",
       description: "Gate access to AI models, inference APIs, and ML services. Perfect for AI-powered tools, chatbots, and predictive analytics.",
       category: "AI/ML",
@@ -42,7 +43,7 @@ export default function UseCasesPage() {
       ]
     },
     {
-      icon: "📊",
+      icon: <BarChart3 className="w-12 h-12" />,
       title: "Data & Analytics",
       description: "Monetize access to real-time data feeds, market analytics, and business intelligence APIs. Instant micro-payments for data queries.",
       category: "Data",
@@ -70,7 +71,7 @@ export default function UseCasesPage() {
       ]
     },
     {
-      icon: "💎",
+      icon: <Gem className="w-12 h-12" />,
       title: "Premium Content",
       description: "Gate exclusive content, premium articles, research reports, and educational materials. Perfect for creators and publishers.",
       category: "Content",
@@ -98,7 +99,7 @@ export default function UseCasesPage() {
       ]
     },
     {
-      icon: "🔍",
+      icon: <Search className="w-12 h-12" />,
       title: "Search & Discovery",
       description: "Monetize advanced search, recommendation engines, and discovery tools. Pay-per-query pricing for enhanced search capabilities.",
       category: "Search",
@@ -126,7 +127,7 @@ export default function UseCasesPage() {
       ]
     },
     {
-      icon: "🎮",
+      icon: <Gamepad2 className="w-12 h-12" />,
       title: "Interactive & Gaming",
       description: "Monetize games, interactive experiences, and entertainment APIs. From slot machines to lottery systems and beyond.",
       category: "Gaming",
@@ -156,7 +157,7 @@ export default function UseCasesPage() {
       ]
     },
     {
-      icon: "🛠️",
+      icon: <Code2 className="w-12 h-12" />,
       title: "Developer Tools",
       description: "Gate access to developer APIs, code generation, testing tools, and infrastructure services. Perfect for SaaS platforms.",
       category: "DevTools",
@@ -184,7 +185,7 @@ export default function UseCasesPage() {
       ]
     },
     {
-      icon: "🎨",
+      icon: <Palette className="w-12 h-12" />,
       title: "Creative Services",
       description: "Monetize design tools, media processing, and creative APIs. From logo generation to video editing and beyond.",
       category: "Creative",
@@ -214,25 +215,25 @@ export default function UseCasesPage() {
   ]
 
   return (
-    <main className="min-h-screen bg-[--neon-black] relative overflow-hidden">
+    <main className="min-h-screen bg-neon-black relative overflow-hidden">
       {/* Noise overlay */}
       <div className="noise-overlay" />
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-16 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-block mb-4" data-reveal>
-            <span className="text-6xl">⚡</span>
+          <div className="inline-block mb-4 text-neon-blue-light animate-float" data-reveal>
+            <Zap className="w-16 h-16 mx-auto drop-shadow-[0_0_15px_rgba(76,201,240,0.5)]" />
           </div>
           <h1
-            className="text-5xl sm:text-6xl md:text-7xl font-sans font-light text-[--neon-white] mb-6"
+            className="text-5xl sm:text-6xl md:text-7xl font-sans font-light text-neon-white mb-6 tracking-tight"
             data-reveal
             data-scramble
           >
-            Use Cases
+            Use <span className="text-neon-blue-light">Cases</span>
           </h1>
           <p
-            className="text-xl sm:text-2xl text-[--neon-grey] font-mono max-w-3xl mx-auto leading-relaxed"
+            className="text-xl sm:text-2xl text-neon-grey font-mono max-w-3xl mx-auto leading-relaxed"
             data-reveal
           >
             Turn any API into a monetizable Blink. From AI models to data feeds,
@@ -243,22 +244,22 @@ export default function UseCasesPage() {
 
         {/* Stats Banner */}
         <div className="max-w-5xl mx-auto mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6" data-reveal>
-          <div className="text-center p-6 border-2 border-dashed border-[--neon-blue-light]/30 rounded-lg bg-[--neon-dark]/50">
-            <div className="text-4xl font-bold font-mono text-[--neon-blue-light]">7</div>
-            <div className="text-sm font-mono text-[--neon-grey] mt-1">Categories</div>
+          <div className="text-center p-6 glass-panel rounded-lg hover:border-neon-blue-light/30 transition-colors">
+            <div className="text-4xl font-bold font-mono text-neon-blue-light drop-shadow-[0_0_10px_rgba(76,201,240,0.3)]">7</div>
+            <div className="text-sm font-mono text-neon-grey mt-1">Categories</div>
           </div>
-          <div className="text-center p-6 border-2 border-dashed border-[--neon-blue-light]/30 rounded-lg bg-[--neon-dark]/50">
-            <div className="text-4xl font-bold font-mono text-[--neon-blue-light]">28+</div>
-            <div className="text-sm font-mono text-[--neon-grey] mt-1">Example APIs</div>
+          <div className="text-center p-6 glass-panel rounded-lg hover:border-neon-blue-light/30 transition-colors">
+            <div className="text-4xl font-bold font-mono text-neon-blue-light drop-shadow-[0_0_10px_rgba(76,201,240,0.3)]">28+</div>
+            <div className="text-sm font-mono text-neon-grey mt-1">Example APIs</div>
           </div>
-          <div className="text-center p-6 border-2 border-dashed border-[--neon-blue-light]/30 rounded-lg bg-[--neon-dark]/50">
-            <div className="text-4xl font-bold font-mono text-[--neon-blue-light]">$0.05</div>
-            <div className="text-sm font-mono text-[--neon-grey] mt-1">Starting Price</div>
+          <div className="text-center p-6 glass-panel rounded-lg hover:border-neon-blue-light/30 transition-colors">
+            <div className="text-4xl font-bold font-mono text-neon-blue-light drop-shadow-[0_0_10px_rgba(76,201,240,0.3)]">$0.05</div>
+            <div className="text-sm font-mono text-neon-grey mt-1">Starting Price</div>
           </div>
         </div>
       </section>
 
-      <NeonDivider className="max-w-6xl mx-auto mb-16" />
+      <NeonDivider className="max-w-6xl mx-auto mb-16 opacity-50" />
 
       {/* Use Cases Grid */}
       <section className="pb-20 px-4">
@@ -281,20 +282,21 @@ export default function UseCasesPage() {
       {/* CTA Section */}
       <section className="pb-20 px-4">
         <div className="max-w-4xl mx-auto text-center" data-reveal>
-          <div className="p-8 sm:p-12 rounded-lg border-2 border-dashed border-[--neon-blue-light] bg-[--neon-dark]">
-            <h2 className="text-3xl sm:text-4xl font-sans font-light text-[--neon-white] mb-4">
+          <div className="p-8 sm:p-12 rounded-lg glass-card border border-neon-blue-light/20 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-neon-blue-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <h2 className="text-3xl sm:text-4xl font-sans font-light text-neon-white mb-4 relative z-10">
               Ready to Monetize Your API?
             </h2>
-            <p className="text-[--neon-grey] font-mono text-base mb-8 max-w-2xl mx-auto">
+            <p className="text-neon-grey font-mono text-base mb-8 max-w-2xl mx-auto relative z-10">
               Create your first payment-gated Blink in under 2 minutes. No smart contracts, no complex setup.
             </p>
             <a
               href="/create"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-[--neon-blue-dark] hover:bg-[--neon-blue-light] text-[--neon-white] font-mono font-bold border-2 border-dashed border-[--neon-blue-light] transition-all duration-200"
-              style={{ boxShadow: "0 0 20px rgba(90, 180, 255, 0.4)" }}
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-neon-blue-primary hover:bg-neon-blue-light text-neon-white font-mono font-bold border border-neon-blue-light/50 transition-all duration-200 shadow-[0_0_20px_rgba(67,97,238,0.4)] hover:shadow-[0_0_30px_rgba(76,201,240,0.6)] relative z-10 hover:-translate-y-1"
             >
               <span>Create Your Blink</span>
-              <span>→</span>
+              <ArrowRight className="w-5 h-5" />
             </a>
           </div>
         </div>

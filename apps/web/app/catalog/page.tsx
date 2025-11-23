@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { mountReveals } from "@/lib/reveal"
 import { mountScramble } from "@/lib/scramble"
 import { getBlinks } from "@/lib/api"
@@ -43,30 +43,32 @@ export default function CatalogPage() {
       })
   }, [])
 
-  // Filter and sort blinks
-  const filteredBlinks = blinks.filter((blink) => {
-    const matchesSearch =
-      searchQuery === "" ||
-      blink.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      blink.description.toLowerCase().includes(searchQuery.toLowerCase())
+  // Filter and sort blinks (memoized to prevent unnecessary recalculations)
+  const filteredBlinks = useMemo(() => {
+    return blinks.filter((blink) => {
+      const matchesSearch =
+        searchQuery === "" ||
+        blink.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        blink.description.toLowerCase().includes(searchQuery.toLowerCase())
 
-    const matchesCategory = selectedCategory === "All" || blink.category === selectedCategory
+      const matchesCategory = selectedCategory === "All" || blink.category === selectedCategory
 
-    return matchesSearch && matchesCategory
-  }).sort((a, b) => {
-    switch (sortBy) {
-      case "popular":
-        return b.runs - a.runs
-      case "price-low":
-        return parseFloat(a.price_usdc) - parseFloat(b.price_usdc)
-      case "price-high":
-        return parseFloat(b.price_usdc) - parseFloat(a.price_usdc)
-      case "recent":
-        return 0 // Would use created_at in real implementation
-      default:
-        return 0
-    }
-  })
+      return matchesSearch && matchesCategory
+    }).sort((a, b) => {
+      switch (sortBy) {
+        case "popular":
+          return b.runs - a.runs
+        case "price-low":
+          return parseFloat(a.price_usdc) - parseFloat(b.price_usdc)
+        case "price-high":
+          return parseFloat(b.price_usdc) - parseFloat(a.price_usdc)
+        case "recent":
+          return 0 // Would use created_at in real implementation
+        default:
+          return 0
+      }
+    })
+  }, [blinks, searchQuery, selectedCategory, sortBy])
 
   return (
     <main className="min-h-screen">
@@ -184,48 +186,26 @@ export default function CatalogPage() {
             </div>
           )}
 
-          {/* Blinks Grid */}
+          {/* Blinks Grid - Simplified animations for better performance */}
           {filteredBlinks.length > 0 ? (
             <motion.div
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
-              initial="hidden"
-              animate="show"
-              variants={{
-                hidden: { opacity: 0 },
-                show: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.08
-                  }
-                }
-              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
             >
-              {filteredBlinks.map((blink, index) => (
-                <motion.div
+              {filteredBlinks.map((blink) => (
+                <BlinkCard
                   key={blink.id}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    show: {
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        duration: 0.5,
-                        ease: [0.34, 1.56, 0.64, 1]
-                      }
-                    }
-                  }}
-                >
-                  <BlinkCard
-                    id={blink.id}
-                    slug={blink.slug}
-                    title={blink.title}
-                    description={blink.description}
-                    price_usdc={blink.price_usdc}
-                    category={blink.category}
-                    runs={blink.runs}
-                    status={blink.status}
-                  />
-                </motion.div>
+                  id={blink.id}
+                  slug={blink.slug}
+                  title={blink.title}
+                  description={blink.description}
+                  price_usdc={blink.price_usdc}
+                  category={blink.category}
+                  runs={blink.runs}
+                  status={blink.status}
+                />
               ))}
             </motion.div>
           ) : (

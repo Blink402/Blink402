@@ -4,6 +4,7 @@ import { getTierDisplayInfo, type TokenHolderTier } from "@blink402/solana"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Check } from "lucide-react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 
@@ -76,12 +77,11 @@ export function SavingsCalculatorCard({
         isMostPopular && !isCurrentTier && "ring-2 ring-[--neon-blue-light]"
       )}
       style={{
-        boxShadow: `0 0 16px ${
-          tier === 'BRONZE' ? 'rgba(217, 119, 6, 0.3)' :
-          tier === 'SILVER' ? 'rgba(156, 163, 175, 0.3)' :
-          tier === 'GOLD' ? 'rgba(251, 191, 36, 0.3)' :
-          'rgba(34, 211, 238, 0.3)'
-        }`
+        boxShadow: `0 0 16px ${tier === 'BRONZE' ? 'rgba(217, 119, 6, 0.3)' :
+            tier === 'SILVER' ? 'rgba(156, 163, 175, 0.3)' :
+              tier === 'GOLD' ? 'rgba(251, 191, 36, 0.3)' :
+                'rgba(34, 211, 238, 0.3)'
+          }`
       }}
     >
       {/* Badges */}
@@ -158,11 +158,13 @@ export function SavingsCalculatorCard({
           disabled
           className="w-full bg-green-500/20 text-green-400 border-2 border-green-500/30 font-mono cursor-not-allowed"
         >
-          ✓ Active Tier
+          <div className="flex items-center justify-center gap-1">
+            <Check className="w-3 h-3" /> Active Tier
+          </div>
         </Button>
       ) : (
         <Link
-          href={`https://jup.ag/swap/USDC-B402?inAmount=${(tierCost * 1000000).toFixed(0)}`}
+          href="https://jup.ag/tokens/2mESiwuVdfft9PxG7x36rvDvex6ccyY8m8BKCWJqpump"
           target="_blank"
           rel="noopener noreferrer"
           className="block"
@@ -186,12 +188,11 @@ export function SavingsCalculatorCard({
       <div
         className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"
         style={{
-          background: `radial-gradient(circle at center, ${
-            tier === 'BRONZE' ? 'rgba(217, 119, 6, 0.5)' :
-            tier === 'SILVER' ? 'rgba(156, 163, 175, 0.5)' :
-            tier === 'GOLD' ? 'rgba(251, 191, 36, 0.5)' :
-            'rgba(34, 211, 238, 0.5)'
-          }, transparent)`
+          background: `radial-gradient(circle at center, ${tier === 'BRONZE' ? 'rgba(217, 119, 6, 0.5)' :
+              tier === 'SILVER' ? 'rgba(156, 163, 175, 0.5)' :
+                tier === 'GOLD' ? 'rgba(251, 191, 36, 0.5)' :
+                  'rgba(34, 211, 238, 0.5)'
+            }, transparent)`
         }}
       />
     </div>

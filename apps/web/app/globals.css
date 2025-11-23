@@ -6,33 +6,45 @@
 /* Single consolidated :root block with all variables */
 :root {
   /* Blink402 neon palette - Enhanced for vibrancy */
-  --neon-black: #0a0a0a; /* Darker black for better contrast */
-  --neon-dark: #121212;
+  --neon-black: #050505;
+  /* Deepest black */
+  --neon-dark: #0a0a0a;
+  /* Standard background */
+  --neon-surface: #121212;
+  /* Card background */
   --neon-grey: #a0a0a0;
   --neon-white: #ffffff;
-  
-  /* Electric Blue Palette */
-  --neon-blue-light: #4cc9f0; /* Cyan-ish blue */
-  --neon-blue-dark: #4361ee; /* Deep electric blue */
-  --neon-blue-glow: #3a0ca3; /* Deep purple-blue for glow */
-  
-  /* Accent Colors */
+
+  /* Electric Blue Palette - More vibrant */
+  --neon-blue-light: #4cc9f0;
+  /* Cyan-ish blue */
+  --neon-blue-primary: #4361ee;
+  /* Primary Brand Blue */
+  --neon-blue-dark: #3a0ca3;
+  /* Deep electric blue */
+  --neon-blue-glow: #4895ef;
+  /* Glow color */
+
+  /* Accent Colors - Popping accents */
   --neon-purple: #7209b7;
   --neon-pink: #f72585;
+  --neon-cyan: #00f5d4;
+  /* New accent */
 
   /* Neon utilities */
-  --accent-gradient: linear-gradient(135deg, var(--neon-blue-light) 0%, var(--neon-blue-dark) 50%, var(--neon-purple) 100%);
-  --border-dashed: 1.5px dashed rgba(76, 201, 240, 0.5);
-  --ring-neon: 0 0 0 3px rgba(76, 201, 240, 0.25), 0 0 0 1px rgba(76, 201, 240, 0.6) inset, 0 0 10px rgba(76, 201, 240, 0.4), 0 0 20px rgba(67, 97, 238, 0.2);
+  --accent-gradient: linear-gradient(135deg, var(--neon-blue-light) 0%, var(--neon-blue-primary) 50%, var(--neon-purple) 100%);
+  --glass-gradient: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+  --border-dashed: 1.5px dashed rgba(76, 201, 240, 0.3);
+
+  /* Glows & Shadows */
+  --glow-primary: 0 0 20px rgba(67, 97, 238, 0.5);
+  --glow-subtle: 0 0 10px rgba(76, 201, 240, 0.3);
+  --ring-neon: 0 0 0 2px rgba(76, 201, 240, 0.5), 0 0 15px rgba(67, 97, 238, 0.4);
 
   /* Premium easing curves */
   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-smooth: cubic-bezier(0.33, 1, 0.68, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-
-  /* AI-specific design tokens */
-  --ai-gradient: linear-gradient(135deg, var(--neon-blue-dark) 0%, var(--neon-purple) 50%, var(--neon-pink) 100%);
-  --ai-glow: 0 0 15px rgba(76, 201, 240, 0.6), 0 0 30px rgba(114, 9, 183, 0.4), inset 0 0 10px rgba(76, 201, 240, 0.2);
 
   /* Semantic tokens for shadcn (mapped to neon palette) */
   --background: var(--neon-black);
@@ -43,34 +55,34 @@
   --popover-foreground: var(--neon-white);
   --primary: var(--neon-blue-light);
   --primary-foreground: var(--neon-black);
-  --secondary: var(--neon-dark);
+  --secondary: var(--neon-surface);
   --secondary-foreground: var(--neon-white);
   --muted: #1a1a1a;
   --muted-foreground: var(--neon-grey);
-  --accent: var(--neon-blue-dark);
+  --accent: var(--neon-blue-primary);
   --accent-foreground: var(--neon-white);
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: rgba(76, 201, 240, 0.2);
-  --input: rgba(76, 201, 240, 0.2);
+  --border: rgba(76, 201, 240, 0.15);
+  --input: rgba(76, 201, 240, 0.15);
   --ring: rgba(76, 201, 240, 0.7);
-  --radius: 0.75rem; /* Slightly more rounded */
+  --radius: 0.75rem;
 
   /* Chart colors */
   --chart-1: var(--neon-blue-light);
-  --chart-2: var(--neon-blue-dark);
+  --chart-2: var(--neon-blue-primary);
   --chart-3: var(--neon-purple);
   --chart-4: var(--neon-pink);
-  --chart-5: var(--neon-grey);
+  --chart-5: var(--neon-cyan);
 
   /* Sidebar */
   --sidebar: var(--neon-dark);
   --sidebar-foreground: var(--neon-white);
   --sidebar-primary: var(--neon-blue-light);
   --sidebar-primary-foreground: var(--neon-black);
-  --sidebar-accent: var(--neon-blue-dark);
+  --sidebar-accent: var(--neon-blue-primary);
   --sidebar-accent-foreground: var(--neon-white);
-  --sidebar-border: rgba(76, 201, 240, 0.2);
+  --sidebar-border: rgba(76, 201, 240, 0.15);
   --sidebar-ring: rgba(76, 201, 240, 0.7);
 }
 
@@ -102,17 +114,15 @@
   /* Custom neon color utilities */
   --color-neon-black: var(--neon-black);
   --color-neon-dark: var(--neon-dark);
+  --color-neon-surface: var(--neon-surface);
   --color-neon-grey: var(--neon-grey);
   --color-neon-white: var(--neon-white);
   --color-neon-blue-light: var(--neon-blue-light);
+  --color-neon-blue-primary: var(--neon-blue-primary);
   --color-neon-blue-dark: var(--neon-blue-dark);
   --color-neon-purple: var(--neon-purple);
   --color-neon-pink: var(--neon-pink);
-
-  /* Legacy green colors - deprecated, use blue instead */
-  --color-neon-green-light: var(--neon-blue-light);
-  --color-neon-green-dark: var(--neon-blue-dark);
-  --color-neon: var(--neon-blue-light);
+  --color-neon-cyan: var(--neon-cyan);
 
   /* Radius */
   --radius-sm: calc(var(--radius) - 4px);
@@ -308,6 +318,54 @@
   }
 
   /* Button styles migrated to components/ui/button.tsx */
+  /* Restoring legacy classes for backward compatibility */
+  .btn-primary {
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--neon-black);
+    background: var(--accent-gradient);
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(43, 74, 107, 0.3);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 0 30px rgba(43, 74, 107, 0.5);
+    transform: translateY(-2px);
+  }
+
+  .btn-primary:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-neon);
+  }
+
+  .btn-ghost {
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--neon-white);
+    background: transparent;
+    border: var(--border-dashed);
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--neon-blue-light);
+    color: var(--neon-blue-light);
+    box-shadow: 0 0 20px rgba(43, 74, 107, 0.2);
+  }
+
+  .btn-ghost:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-neon);
+  }
 
   /* Navigation styles */
   nav {
@@ -726,6 +784,45 @@ dotlottie-player svg path[fill="#fff"] {
     animation: gradient 3s ease infinite;
   }
 
+  /* Glassmorphism Utilities */
+  .glass-panel {
+    background: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .glass-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .glass-card:hover {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border-color: rgba(76, 201, 240, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 15px rgba(76, 201, 240, 0.1);
+  }
+
+  /* Neon Text Effects */
+  .text-neon-blue {
+    color: var(--neon-blue-light);
+    text-shadow: 0 0 5px rgba(76, 201, 240, 0.5), 0 0 10px rgba(76, 201, 240, 0.3);
+  }
+
+  .text-neon-purple {
+    color: var(--neon-purple);
+    text-shadow: 0 0 5px rgba(114, 9, 183, 0.5), 0 0 10px rgba(114, 9, 183, 0.3);
+  }
+
+  .text-neon-pink {
+    color: var(--neon-pink);
+    text-shadow: 0 0 5px rgba(247, 37, 133, 0.5), 0 0 10px rgba(247, 37, 133, 0.3);
+  }
+
   /* AI badge pulse animation */
   @keyframes ai-pulse {
 
@@ -744,6 +841,58 @@ dotlottie-player svg path[fill="#fff"] {
   .ai-badge-pulse {
     animation: ai-pulse 2s ease-in-out infinite;
   }
+
+  /* New Animations */
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes slide-up-fade {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up-fade {
+    animation: slide-up-fade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
 
   /* AI container styling */
   .ai-container {

@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight, Zap, CheckCircle, TrendingUp, Award, RefreshCw } from 'lucide-react'
@@ -48,7 +48,7 @@ const BadgeLabel = ({ badge }: { badge: string }) => {
   }
 }
 
-export default function FeaturedCarousel({ blinks }: FeaturedCarouselProps) {
+const FeaturedCarousel = React.memo(function FeaturedCarousel({ blinks }: FeaturedCarouselProps) {
   const router = useRouter()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
@@ -238,4 +238,6 @@ export default function FeaturedCarousel({ blinks }: FeaturedCarouselProps) {
       )}
     </div>
   )
-}
+})
+
+export default FeaturedCarousel

@@ -6,6 +6,7 @@ import { getAllTierBenefits, getTierThresholds, getB402HolderTier, type TokenHol
 import { useB402Price } from "@/hooks/useB402Price"
 import { SavingsCalculatorCard } from "./SavingsCalculatorCard"
 import { cn } from "@/lib/utils"
+import { Zap, Gamepad2, Ticket, Coins } from "lucide-react"
 
 type ActivityType = 'slot' | 'lottery' | 'blinks'
 
@@ -98,9 +99,21 @@ export function SavingsCalculator() {
   }, [activityType, frequency, b402PriceUSDC, allBenefits, thresholds])
 
   const activityOptions = [
-    { value: 'blinks', label: '⚡ API Blinks', price: '~$0.50/call' },
-    { value: 'slot', label: '🎰 Slot Machine', price: '$0.10/spin' },
-    { value: 'lottery', label: '🎟️ Lottery', price: '$1.00/entry' }
+    {
+      value: 'blinks', label: (
+        <span className="flex items-center gap-2"><Zap className="w-4 h-4" /> API Blinks</span>
+      ), price: '~$0.50/call'
+    },
+    {
+      value: 'slot', label: (
+        <span className="flex items-center gap-2"><Gamepad2 className="w-4 h-4" /> Slot Machine</span>
+      ), price: '$0.10/spin'
+    },
+    {
+      value: 'lottery', label: (
+        <span className="flex items-center gap-2"><Ticket className="w-4 h-4" /> Lottery</span>
+      ), price: '$1.00/entry'
+    }
   ]
 
   return (
@@ -109,7 +122,7 @@ export function SavingsCalculator() {
         {/* Header */}
         <div className="text-center mb-8">
           <h2 className="text-3xl sm:text-4xl font-sans font-light text-[--neon-white] mb-3">
-            <span className="inline-block mr-2">💰</span>
+            <span className="inline-block mr-2"><Coins className="w-8 h-8 inline text-[--neon-blue-light]" /></span>
             Calculate Your B402 Savings
           </h2>
           <p className="text-[--neon-grey] font-mono text-sm sm:text-base max-w-2xl mx-auto">

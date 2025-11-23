@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface AnimatedGridProps {
   className?: string
@@ -9,21 +9,42 @@ interface AnimatedGridProps {
 /**
  * Animated grid background with moving lines
  * Creates a cyberpunk/terminal aesthetic
+ * Performance optimized: 30fps, pauses when hidden, disabled on mobile
  */
 export function AnimatedGrid({ className = '' }: AnimatedGridProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
+    // Check if mobile device (disable animation on mobile for performance)
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window)
+    }
+    checkMobile()
+  }, [])
+
+  useEffect(() => {
+    // Don't animate on mobile
+    if (isMobile) return
+
     const canvas = canvasRef.current
     if (!canvas) return
 
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Set canvas size
+    // Check for prefers-reduced-motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion) return
+
+    // Set canvas size with throttled resize
+    let resizeTimeout: NodeJS.Timeout
     const resize = () => {
-      canvas.width = canvas.offsetWidth
-      canvas.height = canvas.offsetHeight
+      clearTimeout(resizeTimeout)
+      resizeTimeout = setTimeout(() => {
+        canvas.width = canvas.offsetWidth
+        canvas.height = canvas.offsetHeight
+      }, 100)
     }
     resize()
     window.addEventListener('resize', resize)
@@ -32,10 +53,35 @@ export function AnimatedGrid({ className = '' }: AnimatedGridProps) {
     const gridSize = 40
     let offsetX = 0
     let offsetY = 0
+    let lastFrameTime = 0
+    const targetFPS = 30 // Reduced from 60fps
+    const frameInterval = 1000 / targetFPS
+    let animationId: number
+    let isVisible = true
 
-    // Animation
-    const animate = () => {
-      if (!ctx || !canvas) return
+    // Page Visibility API - pause animation when tab is hidden
+    const handleVisibilityChange = () => {
+      isVisible = !document.hidden
+      if (isVisible) {
+        lastFrameTime = performance.now()
+        animationId = requestAnimationFrame(animate)
+      } else {
+        cancelAnimationFrame(animationId)
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    // Animation loop with FPS throttling
+    const animate = (currentTime: number) => {
+      if (!ctx || !canvas || !isVisible) return
+
+      // Throttle to 30fps
+      const elapsed = currentTime - lastFrameTime
+      if (elapsed < frameInterval) {
+        animationId = requestAnimationFrame(animate)
+        return
+      }
+      lastFrameTime = currentTime - (elapsed % frameInterval)
 
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -72,16 +118,18 @@ export function AnimatedGrid({ className = '' }: AnimatedGridProps) {
         }
       }
 
-      requestAnimationFrame(animate)
+      animationId = requestAnimationFrame(animate)
     }
 
-    const animationId = requestAnimationFrame(animate)
+    animationId = requestAnimationFrame(animate)
 
     return () => {
       window.removeEventListener('resize', resize)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
       cancelAnimationFrame(animationId)
+      clearTimeout(resizeTimeout)
     }
-  }, [])
+  }, [isMobile])
 
   return (
     <canvas

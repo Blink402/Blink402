@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { useOnchainPay } from '@onchainfi/connect'
 import Image from 'next/image'
+import { Check } from 'lucide-react'
 import { logger } from '@/lib/logger'
 
 interface GalleryPaywallProps {
@@ -139,10 +140,10 @@ export function GalleryPaywall({
         )}
 
         <div className="mt-8 pt-8 border-t border-neon-grey text-left text-sm text-neon-grey font-mono space-y-2">
-          <p>✓ Instant access after payment</p>
-          <p>✓ Access all current and future uploads</p>
-          <p>✓ Secure on-chain payment verification</p>
-          <p>✓ {durationDays} days of unlimited viewing</p>
+          <p className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /> Instant access after payment</p>
+          <p className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /> Access all current and future uploads</p>
+          <p className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /> Secure on-chain payment verification</p>
+          <p className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /> {durationDays} days of unlimited viewing</p>
         </div>
       </div>
     </div>

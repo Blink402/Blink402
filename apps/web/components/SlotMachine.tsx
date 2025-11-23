@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { SlotReel } from "./SlotReel"
 import { mountScramble } from "@/lib/scramble"
 import { cn, formatUsdc } from "@/lib/utils"
+import { Check, X, Coins, Gamepad2, Lock } from "lucide-react"
 import type { SlotSymbol, SpinResult } from "@blink402/types"
 
 interface SlotMachineProps {
@@ -135,7 +136,7 @@ export function SlotMachine({ onSpin, onPlayAgain, disabled = false }: SlotMachi
                   {lastResult.payoutSignature && (
                     <div className="mt-4 pt-4 border-t border-[--neon-blue-light]/30">
                       <div className="text-green-400 font-mono text-sm flex items-center justify-center gap-2">
-                        ✓ Payout sent to your wallet
+                        <Check className="w-4 h-4" /> Payout sent to your wallet
                       </div>
                     </div>
                   )}
@@ -169,8 +170,8 @@ export function SlotMachine({ onSpin, onPlayAgain, disabled = false }: SlotMachi
               boxShadow: "0 0 12px rgba(239, 68, 68, 0.3), 0 0 24px rgba(239, 68, 68, 0.15)"
             }}
           >
-            <div className="text-red-400 font-mono text-sm">
-              ✕ {error}
+            <div className="text-red-400 font-mono text-sm flex items-center justify-center gap-2">
+              <X className="w-4 h-4" /> {error}
             </div>
           </div>
         )}
@@ -200,7 +201,7 @@ export function SlotMachine({ onSpin, onPlayAgain, disabled = false }: SlotMachi
                   Processing...
                 </span>
               ) : (
-                '💰 Pay & Play Again'
+                <span className="flex items-center justify-center gap-2"><Coins className="w-5 h-5" /> Pay & Play Again</span>
               )}
             </button>
           </div>
@@ -212,30 +213,30 @@ export function SlotMachine({ onSpin, onPlayAgain, disabled = false }: SlotMachi
             onClick={handleSpin}
             disabled={isSpinning || disabled}
             className={cn(
-            "w-full py-4 px-8 rounded-lg font-mono text-lg font-bold",
-            "border-2 border-dashed transition-all duration-200",
-            "relative overflow-hidden group",
-            isSpinning || disabled
-              ? "border-[--neon-grey] bg-[--neon-dark] text-[--neon-grey] cursor-not-allowed"
-              : "border-[--neon-blue-light] bg-[--neon-black] text-[--neon-white] hover:bg-[--neon-blue-light] hover:text-[--neon-black] hover:scale-[1.02] active:scale-[0.98]"
-          )}
-          style={
-            !isSpinning && !disabled
-              ? {
+              "w-full py-4 px-8 rounded-lg font-mono text-lg font-bold",
+              "border-2 border-dashed transition-all duration-200",
+              "relative overflow-hidden group",
+              isSpinning || disabled
+                ? "border-[--neon-grey] bg-[--neon-dark] text-[--neon-grey] cursor-not-allowed"
+                : "border-[--neon-blue-light] bg-[--neon-black] text-[--neon-white] hover:bg-[--neon-blue-light] hover:text-[--neon-black] hover:scale-[1.02] active:scale-[0.98]"
+            )}
+            style={
+              !isSpinning && !disabled
+                ? {
                   boxShadow: "0 0 16px rgba(90, 180, 255, 0.5), 0 0 32px rgba(90, 180, 255, 0.25), inset 0 0 8px rgba(90, 180, 255, 0.1)",
                 }
-              : undefined
-          }
-        >
-          {isSpinning ? (
-            <span className="font-mono flex items-center justify-center gap-2">
-              <span className="inline-block w-4 h-4 border-2 border-[--neon-grey] border-t-transparent rounded-full animate-spin" />
-              Spinning...
-            </span>
-          ) : (
-            <span className="font-mono">🎰 SPIN (0.10 USDC)</span>
-          )}
-        </button>
+                : undefined
+            }
+          >
+            {isSpinning ? (
+              <span className="font-mono flex items-center justify-center gap-2">
+                <span className="inline-block w-4 h-4 border-2 border-[--neon-grey] border-t-transparent rounded-full animate-spin" />
+                Spinning...
+              </span>
+            ) : (
+              <span className="font-mono flex items-center justify-center gap-2"><Gamepad2 className="w-5 h-5" /> SPIN (0.10 USDC)</span>
+            )}
+          </button>
         )}
 
         {/* Stats */}
@@ -267,8 +268,8 @@ export function SlotMachine({ onSpin, onPlayAgain, disabled = false }: SlotMachi
         {/* Provably Fair Info */}
         {lastResult && (
           <details className="relative mt-4">
-            <summary className="font-sans cursor-pointer text-[--neon-grey] text-xs text-center hover:text-[--neon-white]">
-              🔒 Verify Provably Fair Result
+            <summary className="font-sans cursor-pointer text-[--neon-grey] text-xs text-center hover:text-[--neon-white] flex items-center justify-center gap-2">
+              <Lock className="w-3 h-3" /> Verify Provably Fair Result
             </summary>
             <div
               className={cn(

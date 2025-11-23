@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { APIResultCard } from '@/components/APIResultCard'
-import { Sparkles, AlertCircle, ChevronDown, ChevronUp, Lightbulb } from 'lucide-react'
+import { Sparkles, AlertCircle, ChevronDown, ChevronUp, Lightbulb, Check } from 'lucide-react'
 import Lottie from '@/components/Lottie'
 import { HelpTooltip } from '@/components/HelpTooltip'
 
@@ -165,9 +165,9 @@ export function AIEndpointFinder({ onSelect, className = '' }: AIEndpointFinderP
           {/* Show success indicator when collapsed and item selected */}
           {!isOpen && selectedId && (
             <div className="mt-3 px-3 py-2 bg-green-500/10 border border-green-500/30 rounded">
-              <p className="text-green-400 text-xs font-mono">
-                ✓ API selected - Review and customize fields below
-              </p>
+              <div className="text-green-400 font-mono text-sm mb-4 flex items-center gap-2">
+                <Check className="w-4 h-4" /> API selected - Review and customize fields below
+              </div>
             </div>
           )}
         </CollapsibleTrigger>
@@ -189,13 +189,12 @@ export function AIEndpointFinder({ onSelect, className = '' }: AIEndpointFinderP
                 />
                 <div className="absolute bottom-3 right-3 flex items-center gap-3">
                   <span
-                    className={`text-xs font-mono ${
-                      charCount > maxChars
+                    className={`text-xs font-mono ${charCount > maxChars
                         ? 'text-red-400'
                         : charCount < minChars
-                        ? 'text-neon-grey'
-                        : 'text-neon-blue-light'
-                    }`}
+                          ? 'text-neon-grey'
+                          : 'text-neon-blue-light'
+                      }`}
                   >
                     {charCount}/{maxChars}
                   </span>

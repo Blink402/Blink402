@@ -1,5 +1,6 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
+import { AlertTriangle } from "lucide-react"
 import { Blink, useAction } from "@dialectlabs/blinks"
 import { useActionSolanaWalletAdapter } from "@dialectlabs/blinks/hooks/solana"
 import "@dialectlabs/blinks/index.css"
@@ -64,8 +65,8 @@ export default function BlinkEmbed({ slug, className = "" }: BlinkEmbedProps) {
   if (!isLoading && !action) {
     return (
       <Card className={`p-8 bg-neon-dark/20 border-dashed border-red-500/30 ${className}`}>
-        <div className="text-center">
-          <p className="text-red-400 font-mono text-sm mb-2">⚠️ Failed to load blink</p>
+        <div className="p-4 border border-red-500/30 bg-red-500/10 rounded text-center">
+          <p className="text-red-400 font-mono text-sm mb-2 flex items-center justify-center gap-2"><AlertTriangle className="w-4 h-4" /> Failed to load blink</p>
           <p className="text-neon-grey font-mono text-xs">
             Please check back later or try a different demo.
           </p>

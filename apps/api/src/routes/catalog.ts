@@ -11,6 +11,9 @@ import {
 } from '@blink402/database'
 import { getCacheOrFetch, deleteCache, setCache, isRedisConnected } from '@blink402/redis'
 import type { CatalogFilters } from '@blink402/types'
+import { verifyWalletAuth, verifyOwnership } from '../auth.js'
+import { FastifyRequest, FastifyReply } from 'fastify'
+import { getInternalApiConfig } from '@blink402/config'
 
 // Define query parameters for catalog endpoint
 interface CatalogQuery {
@@ -33,6 +36,24 @@ interface ReportBody {
 }
 
 export const catalogRoutes: FastifyPluginAsync = async (fastify) => {
+  // Internal API key middleware for background jobs
+  async function verifyInternalApiKey(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    const apiKey = request.headers['x-internal-api-key']
+    const { apiKey: expectedKey, isEnabled } = getInternalApiConfig()
+
+    if (!isEnabled) {
+      fastify.log.warn('INTERNAL_API_KEY not configured - internal endpoints are unprotected!')
+      return // Allow request if no key configured (development mode)
+    }
+
+    if (!apiKey || apiKey !== expectedKey) {
+      return reply.code(401).send({
+        success: false,
+        error: 'Unauthorized - invalid or missing internal API key'
+      })
+    }
+  }
+
   // Get public catalog blinks with filters
   fastify.get<{ Querystring: CatalogQuery }>('/catalog', async (request, reply) => {
     const {
@@ -153,19 +174,27 @@ export const catalogRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.put<{
     Params: { slug: string }
     Body: { is_public: boolean; publish_to_catalog?: boolean }
-  }>('/catalog/:slug/publish', async (request, reply) => {
+  }>('/catalog/:slug/publish', {
+    preHandler: verifyWalletAuth
+  }, async (request, reply) => {
     const { slug } = request.params
     const { is_public, publish_to_catalog = false } = request.body
 
     try {
-      // TODO: Add authentication check here to ensure only creator can toggle
-      // For now, we'll skip auth as it's not implemented yet
-
       const blink = await getBlinkBySlug(slug)
       if (!blink) {
         return reply.code(404).send({
           success: false,
           error: 'Blink not found'
+        })
+      }
+
+      // Verify the authenticated wallet owns this blink
+      const authenticatedWallet = request.authenticatedWallet
+      if (!authenticatedWallet || !verifyOwnership(authenticatedWallet, blink.creator.wallet)) {
+        return reply.code(403).send({
+          success: false,
+          error: 'Forbidden - you do not own this blink'
         })
       }
 
@@ -312,12 +341,12 @@ export const catalogRoutes: FastifyPluginAsync = async (fastify) => {
   })
 
   // Update blink badges (internal endpoint for background job)
-  fastify.post<{ Params: { id: string } }>('/catalog/:id/badges', async (request, reply) => {
+  fastify.post<{ Params: { id: string } }>('/catalog/:id/badges', {
+    preHandler: verifyInternalApiKey
+  }, async (request, reply) => {
     const { id } = request.params
 
     try {
-      // TODO: Add internal API key check for security
-
       const success = await updateBlinkBadges(id)
 
       if (success) {
@@ -344,13 +373,13 @@ export const catalogRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.post<{
     Params: { id: string }
     Body: { status: 'healthy' | 'degraded' | 'unhealthy' }
-  }>('/catalog/:id/health', async (request, reply) => {
+  }>('/catalog/:id/health', {
+    preHandler: verifyInternalApiKey
+  }, async (request, reply) => {
     const { id } = request.params
     const { status } = request.body
 
     try {
-      // TODO: Add internal API key check for security
-
       const success = await updateBlinkHealth(id, status)
 
       if (success) {

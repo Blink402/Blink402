@@ -1,4 +1,5 @@
 "use client"
+import React from "react"
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -15,7 +16,7 @@ type BlinkCardProps = {
   status: "active" | "archived" | "paused"
 }
 
-export default function BlinkCard({
+const BlinkCard = React.memo(function BlinkCard({
   id,
   slug,
   title,
@@ -90,4 +91,6 @@ export default function BlinkCard({
     }
     return <div className="p-4 bg-red-500 text-white">Error rendering card</div>
   }
-}
+})
+
+export default BlinkCard

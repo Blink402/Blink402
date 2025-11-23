@@ -6,18 +6,11 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { slug } = await params
+  const { slug} = await params
   const body = await request.json()
 
   // Extract X-Payment header for x402 payment verification
   const xPaymentHeader = request.headers.get('X-Payment')
-
-  console.log('[LOTTERY PROXY] Request received:', {
-    slug,
-    hasXPaymentHeader: !!xPaymentHeader,
-    headerLength: xPaymentHeader?.length,
-    bodyKeys: Object.keys(body)
-  })
 
   try {
     // Build headers object
@@ -28,9 +21,6 @@ export async function POST(
     // Include X-Payment header if present (for x402 verification)
     if (xPaymentHeader) {
       headers['X-Payment'] = xPaymentHeader
-      console.log('[LOTTERY PROXY] Forwarding X-Payment header to backend')
-    } else {
-      console.log('[LOTTERY PROXY] WARNING: No X-Payment header found!')
     }
 
     const response = await fetch(`${API_URL}/lottery/${slug}/enter`, {
@@ -47,7 +37,6 @@ export async function POST(
 
     return NextResponse.json(data)
   } catch (error: any) {
-    console.error('Lottery entry proxy error:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to create lottery entry' },
       { status: 500 }

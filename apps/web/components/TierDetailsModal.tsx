@@ -6,6 +6,7 @@ import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/di
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { Gamepad2, Ticket, Zap, Check } from "lucide-react"
 
 interface TierDetailsModalProps {
   currentTier: TokenHolderTier
@@ -134,7 +135,9 @@ export default function TierDetailsModal({
           <tbody className="text-[--neon-grey] font-mono text-xs">
             {/* Slot Machine Benefits */}
             <tr className="border-b border-[--neon-grey]/20">
-              <td className="p-3 font-bold text-[--neon-white]" colSpan={5}>🎰 Slot Machine</td>
+              <td className="p-3 font-bold text-[--neon-white]" colSpan={5}>
+                <span className="flex items-center gap-2"><Gamepad2 className="w-4 h-4" /> Slot Machine</span>
+              </td>
             </tr>
             <tr className="border-b border-[--neon-grey]/10">
               <td className="p-3">Entry Discount</td>
@@ -175,7 +178,9 @@ export default function TierDetailsModal({
 
             {/* Lottery Benefits */}
             <tr className="border-b border-[--neon-grey]/20">
-              <td className="p-3 font-bold text-[--neon-white]" colSpan={5}>🎟️ Lottery</td>
+              <td className="p-3 font-bold text-[--neon-white]" colSpan={5}>
+                <span className="flex items-center gap-2"><Ticket className="w-4 h-4" /> Lottery</span>
+              </td>
             </tr>
             <tr className="border-b border-[--neon-grey]/10">
               <td className="p-3">Entry Discount</td>
@@ -216,7 +221,9 @@ export default function TierDetailsModal({
 
             {/* Blink Benefits */}
             <tr className="border-b border-[--neon-grey]/20">
-              <td className="p-3 font-bold text-[--neon-white]" colSpan={5}>⚡ API Blinks</td>
+              <td className="p-3 font-bold text-[--neon-white]" colSpan={5}>
+                <span className="flex items-center gap-2"><Zap className="w-4 h-4" /> API Blinks</span>
+              </td>
             </tr>
             <tr className="border-b border-[--neon-grey]/10">
               <td className="p-3">Creator Fee Discount</td>
@@ -237,7 +244,7 @@ export default function TierDetailsModal({
                 const isCurrentTier = tier === currentTier
                 return (
                   <td key={tier} className={cn("p-3 text-center", isCurrentTier && "bg-green-900/10")}>
-                    {benefits.blinks.priorityExecution ? '✓' : '—'}
+                    {benefits.blinks.priorityExecution ? <Check className="w-4 h-4 mx-auto text-green-400" /> : '—'}
                   </td>
                 )
               })}
@@ -249,7 +256,7 @@ export default function TierDetailsModal({
                 const isCurrentTier = tier === currentTier
                 return (
                   <td key={tier} className={cn("p-3 text-center", isCurrentTier && "bg-green-900/10")}>
-                    {benefits.blinks.customBranding ? '✓' : '—'}
+                    {benefits.blinks.customBranding ? <Check className="w-4 h-4 mx-auto text-green-400" /> : '—'}
                   </td>
                 )
               })}

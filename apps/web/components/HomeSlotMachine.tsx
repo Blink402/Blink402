@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { usePrivy, useWallets } from "@privy-io/react-auth"
 import { cn } from "@/lib/utils"
 import { SlotMachine } from "@/components/SlotMachine"
+import { Gamepad2, Gem, Zap, Coins } from "lucide-react"
 import type { SpinResult } from "@blink402/types"
 import {
   PublicKey,
@@ -289,7 +290,7 @@ export function HomeSlotMachine() {
         <div className="space-y-6">
           {/* Preview Reels */}
           <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
-            {['🎰', '💎', '⚡'].map((symbol, i) => (
+            {['gamepad', 'gem', 'zap'].map((symbol, i) => (
               <div
                 key={i}
                 className={cn(
@@ -305,12 +306,11 @@ export function HomeSlotMachine() {
                 }}
               >
                 <div
-                  className="text-5xl font-bold transition-transform group-hover:scale-125"
-                  style={{
-                    textShadow: "0 0 20px rgba(90, 180, 255, 0.8)"
-                  }}
+                  className="text-neon-blue-light transition-transform group-hover:scale-125"
                 >
-                  {symbol}
+                  {symbol === 'gamepad' && <Gamepad2 className="w-12 h-12" />}
+                  {symbol === 'gem' && <Gem className="w-12 h-12" />}
+                  {symbol === 'zap' && <Zap className="w-12 h-12" />}
                 </div>
               </div>
             ))}
@@ -366,8 +366,8 @@ export function HomeSlotMachine() {
               style={
                 ready && gameState !== 'paying' && blink
                   ? {
-                      boxShadow: "0 0 24px rgba(90, 180, 255, 0.7)"
-                    }
+                    boxShadow: "0 0 24px rgba(90, 180, 255, 0.7)"
+                  }
                   : undefined
               }
             >
@@ -382,9 +382,9 @@ export function HomeSlotMachine() {
                   Processing...
                 </span>
               ) : authenticated ? (
-                '💰 PAY 0.10 USDC & PLAY'
+                <span className="flex items-center justify-center gap-2"><Coins className="w-5 h-5" /> PAY 0.10 USDC & PLAY</span>
               ) : (
-                '🎰 CONNECT WALLET'
+                <span className="flex items-center justify-center gap-2"><Gamepad2 className="w-5 h-5" /> CONNECT WALLET</span>
               )}
             </button>
           </div>

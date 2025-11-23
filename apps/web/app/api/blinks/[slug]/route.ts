@@ -31,7 +31,6 @@ export async function GET(request: NextRequest, { params }: Params) {
       data: blink,
     })
   } catch (error) {
-    console.error('Error fetching blink:', error)
     return NextResponse.json(
       { success: false, error: 'Failed to fetch blink' },
       { status: 500 }
@@ -80,7 +79,6 @@ export async function PUT(request: NextRequest, { params }: Params) {
       message: 'Blink updated successfully',
     })
   } catch (error) {
-    console.error('Error updating blink:', error)
     return NextResponse.json(
       { success: false, error: 'Failed to update blink' },
       { status: 500 }
@@ -127,7 +125,6 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       message: 'Blink deleted successfully',
     })
   } catch (error) {
-    console.error('Error deleting blink:', error)
     return NextResponse.json(
       { success: false, error: 'Failed to delete blink' },
       { status: 500 }

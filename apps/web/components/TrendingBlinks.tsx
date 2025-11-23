@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { TrendingUp, Clock, Zap, ChevronLeft, ChevronRight } from 'lucide-react'
 import { BlinkData } from '@blink402/types'
@@ -9,7 +9,7 @@ interface TrendingBlinksProps {
   blinks: BlinkData[]
 }
 
-export default function TrendingBlinks({ blinks }: TrendingBlinksProps) {
+const TrendingBlinks = React.memo(function TrendingBlinks({ blinks }: TrendingBlinksProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const [visibleCards, setVisibleCards] = useState(4)
@@ -192,4 +192,6 @@ export default function TrendingBlinks({ blinks }: TrendingBlinksProps) {
       </div>
     </div>
   )
-}
+})
+
+export default TrendingBlinks

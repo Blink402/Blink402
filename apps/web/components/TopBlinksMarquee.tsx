@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { X } from "lucide-react"
+import { X, Rocket } from "lucide-react"
 
 const STORAGE_KEY = "v2-announcement-dismissed"
 
@@ -36,7 +36,7 @@ export default function TopBlinksMarquee() {
         className="block relative flex items-center justify-center h-10 sm:h-10 px-4 pr-10 hover:bg-neon-blue-dark/20 transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-mono flex-wrap justify-center">
-          <span className="text-neon-blue-light text-base sm:text-lg">🚀</span>
+          <Rocket className="w-4 h-4 text-neon-blue-light" />
           <span className="text-neon-white font-semibold">Now Live:</span>
           <span className="text-neon-blue-light hidden sm:inline">Blink402 v2 with ONCHAIN x402 Integration</span>
           <span className="text-neon-blue-light sm:hidden">Blink402 v2</span>

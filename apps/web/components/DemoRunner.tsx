@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Loader2, Check } from 'lucide-react'
 import { DemoConsole, type ConsoleLog } from './DemoConsole'
 
 type DemoState = 'idle' | 'requesting' | 'verifying' | 'calling' | 'success' | 'failed'
@@ -134,15 +135,14 @@ export function DemoRunner() {
       <div className="flex items-center justify-between rounded-lg border border-dashed border-neon-blue-light/30 bg-neon-dark px-6 py-4">
         <div className="flex items-center gap-3">
           <div
-            className={`h-3 w-3 rounded-full ${
-              state === 'success'
-                ? 'bg-neon-blue-light animate-pulse'
-                : state === 'failed'
+            className={`h-3 w-3 rounded-full ${state === 'success'
+              ? 'bg-neon-blue-light animate-pulse'
+              : state === 'failed'
                 ? 'bg-red-400'
                 : isLoading
-                ? 'bg-yellow-400 animate-pulse'
-                : 'bg-neon-grey/50'
-            }`}
+                  ? 'bg-yellow-400 animate-pulse'
+                  : 'bg-neon-grey/50'
+              }`}
           />
           <span className={`font-medium ${getStateColor()}`}>{getStateLabel()}</span>
         </div>
@@ -150,33 +150,14 @@ export function DemoRunner() {
         <button
           onClick={runDemo}
           disabled={isLoading}
-          className={`rounded-lg border-2 border-dashed px-6 py-2 font-medium transition-all ${
-            isLoading
-              ? 'cursor-not-allowed border-neon-grey/30 text-neon-grey/50'
-              : 'border-neon-blue-light text-neon-blue-light hover:border-neon-blue-dark hover:bg-neon-blue-light/10 hover:text-neon-blue-dark hover:shadow-[0_0_20px_rgba(39,218,180,0.3)]'
-          }`}
+          className={`rounded-lg border-2 border-dashed px-6 py-2 font-medium transition-all ${isLoading
+            ? 'cursor-not-allowed border-neon-grey/30 text-neon-grey/50'
+            : 'border-neon-blue-light text-neon-blue-light hover:border-neon-blue-dark hover:bg-neon-blue-light/10 hover:text-neon-blue-dark hover:shadow-[0_0_20px_rgba(39,218,180,0.3)]'
+            }`}
         >
           {isLoading ? (
             <span className="flex items-center gap-2">
-              <svg
-                className="h-5 w-5 animate-spin"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
+              <Loader2 className="h-5 w-5 animate-spin" />
               Running...
             </span>
           ) : (
@@ -192,12 +173,11 @@ export function DemoRunner() {
             key: 'requesting',
             label: 'Transaction',
             icon: (isActive: boolean, isCompleted: boolean, isFailed: boolean) => (
-              <div className={`w-10 h-10 mx-auto rounded border-2 border-dashed flex items-center justify-center font-mono text-xl font-bold ${
-                isActive ? 'border-yellow-400 text-yellow-400' :
+              <div className={`w-10 h-10 mx-auto rounded border-2 border-dashed flex items-center justify-center font-mono text-xl font-bold ${isActive ? 'border-yellow-400 text-yellow-400' :
                 isCompleted ? 'border-neon-blue-light text-neon-blue-light' :
-                isFailed ? 'border-red-400 text-red-400' :
-                'border-neon-grey/50 text-neon-grey/50'
-              }`}>
+                  isFailed ? 'border-red-400 text-red-400' :
+                    'border-neon-grey/50 text-neon-grey/50'
+                }`}>
                 $
               </div>
             )
@@ -206,13 +186,12 @@ export function DemoRunner() {
             key: 'verifying',
             label: 'Verification',
             icon: (isActive: boolean, isCompleted: boolean, isFailed: boolean) => (
-              <div className={`w-10 h-10 mx-auto rounded-full border-2 border-dashed flex items-center justify-center font-mono text-xl font-bold ${
-                isActive ? 'border-yellow-400 text-yellow-400' :
+              <div className={`w-10 h-10 mx-auto rounded-full border-2 border-dashed flex items-center justify-center ${isActive ? 'border-yellow-400 text-yellow-400' :
                 isCompleted ? 'border-neon-blue-light text-neon-blue-light' :
-                isFailed ? 'border-red-400 text-red-400' :
-                'border-neon-grey/50 text-neon-grey/50'
-              }`}>
-                ✓
+                  isFailed ? 'border-red-400 text-red-400' :
+                    'border-neon-grey/50 text-neon-grey/50'
+                }`}>
+                <Check className="w-5 h-5" />
               </div>
             )
           },
@@ -220,12 +199,11 @@ export function DemoRunner() {
             key: 'calling',
             label: 'API Call',
             icon: (isActive: boolean, isCompleted: boolean, isFailed: boolean) => (
-              <div className={`w-10 h-10 mx-auto rounded border-2 border-dashed flex items-center justify-center font-mono text-xl font-bold ${
-                isActive ? 'border-yellow-400 text-yellow-400' :
+              <div className={`w-10 h-10 mx-auto rounded border-2 border-dashed flex items-center justify-center font-mono text-xl font-bold ${isActive ? 'border-yellow-400 text-yellow-400' :
                 isCompleted ? 'border-neon-blue-light text-neon-blue-light' :
-                isFailed ? 'border-red-400 text-red-400' :
-                'border-neon-grey/50 text-neon-grey/50'
-              }`}>
+                  isFailed ? 'border-red-400 text-red-400' :
+                    'border-neon-grey/50 text-neon-grey/50'
+                }`}>
                 ⟳
               </div>
             )
@@ -234,12 +212,11 @@ export function DemoRunner() {
             key: 'success',
             label: 'Result',
             icon: (isActive: boolean, isCompleted: boolean, isFailed: boolean) => (
-              <div className={`w-10 h-10 mx-auto rounded border-2 border-dashed flex items-center justify-center font-mono text-xl font-bold ${
-                isActive ? 'border-yellow-400 text-yellow-400' :
+              <div className={`w-10 h-10 mx-auto rounded border-2 border-dashed flex items-center justify-center font-mono text-xl font-bold ${isActive ? 'border-yellow-400 text-yellow-400' :
                 isCompleted ? 'border-neon-blue-light text-neon-blue-light' :
-                isFailed ? 'border-red-400 text-red-400' :
-                'border-neon-grey/50 text-neon-grey/50'
-              }`}>
+                  isFailed ? 'border-red-400 text-red-400' :
+                    'border-neon-grey/50 text-neon-grey/50'
+                }`}>
                 ★
               </div>
             )
@@ -255,29 +232,27 @@ export function DemoRunner() {
           return (
             <div
               key={step.key}
-              className={`rounded-lg border border-dashed p-4 text-center transition-all ${
-                isActive
-                  ? 'border-yellow-400 bg-yellow-400/10'
-                  : isCompleted
+              className={`rounded-lg border border-dashed p-4 text-center transition-all ${isActive
+                ? 'border-yellow-400 bg-yellow-400/10'
+                : isCompleted
                   ? 'border-neon-blue-light bg-neon-blue-light/10'
                   : isFailed
-                  ? 'border-red-400 bg-red-400/10'
-                  : 'border-neon-grey/30 bg-neon-dark'
-              }`}
+                    ? 'border-red-400 bg-red-400/10'
+                    : 'border-neon-grey/30 bg-neon-dark'
+                }`}
             >
               <div className="mb-3">
                 {step.icon(isActive, isCompleted, isFailed)}
               </div>
               <div
-                className={`text-sm font-medium font-mono ${
-                  isActive
-                    ? 'text-yellow-400'
-                    : isCompleted
+                className={`text-sm font-medium font-mono ${isActive
+                  ? 'text-yellow-400'
+                  : isCompleted
                     ? 'text-neon-blue-light'
                     : isFailed
-                    ? 'text-red-400'
-                    : 'text-neon-grey'
-                }`}
+                      ? 'text-red-400'
+                      : 'text-neon-grey'
+                  }`}
               >
                 {step.label}
               </div>

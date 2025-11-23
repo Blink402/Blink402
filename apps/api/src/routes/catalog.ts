@@ -11,7 +11,7 @@ import {
 } from '@blink402/database'
 import { getCacheOrFetch, deleteCache, setCache, isRedisConnected } from '@blink402/redis'
 import type { CatalogFilters } from '@blink402/types'
-import { verifyWalletAuth, verifyOwnership } from '../auth.js'
+import { verifyWalletAuth, verifyOwnership, type WalletAuthBody } from '../auth.js'
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { getInternalApiConfig } from '@blink402/config'
 
@@ -173,7 +173,7 @@ export const catalogRoutes: FastifyPluginAsync = async (fastify) => {
   // Toggle blink public visibility (creator only)
   fastify.put<{
     Params: { slug: string }
-    Body: { is_public: boolean; publish_to_catalog?: boolean }
+    Body: WalletAuthBody & { is_public: boolean; publish_to_catalog?: boolean }
   }>('/catalog/:slug/publish', {
     preHandler: verifyWalletAuth
   }, async (request, reply) => {

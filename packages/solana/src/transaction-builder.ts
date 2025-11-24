@@ -149,10 +149,38 @@ export async function buildUsdcPaymentTransaction(
   }
 
   // Verify merchant ATA exists (ONCHAIN EXACT-SVM requirement)
-  const merchantAtaInfo = await connection.getAccountInfo(merchantATA)
+  // Retry up to 3 times to handle temporary RPC issues
+  let merchantAtaInfo = null
+  let attempts = 0
+  while (!merchantAtaInfo && attempts < 3) {
+    attempts++
+    try {
+      merchantAtaInfo = await connection.getAccountInfo(merchantATA)
+      if (!merchantAtaInfo) {
+        logger.warn(`Merchant ATA check attempt ${attempts}/3 returned null`, {
+          merchant: merchant.toBase58(),
+          merchantATA: merchantATA.toBase58(),
+          network
+        })
+        if (attempts < 3) {
+          await new Promise(resolve => setTimeout(resolve, 500)) // Wait 500ms before retry
+        }
+      }
+    } catch (err: any) {
+      logger.error(`Merchant ATA check attempt ${attempts}/3 failed`, {
+        merchant: merchant.toBase58(),
+        merchantATA: merchantATA.toBase58(),
+        error: err.message
+      })
+      if (attempts < 3) {
+        await new Promise(resolve => setTimeout(resolve, 500))
+      }
+    }
+  }
+
   if (!merchantAtaInfo) {
     throw new Error(
-      `Merchant USDC account doesn't exist. Please contact the merchant to set up their USDC account.`
+      `Merchant USDC account doesn't exist or couldn't be verified. Merchant: ${merchant.toBase58()}, USDC ATA: ${merchantATA.toBase58()}. Please contact the merchant to set up their USDC account or try again in a moment.`
     )
   }
 

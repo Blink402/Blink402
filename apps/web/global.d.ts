@@ -51,11 +51,35 @@ interface TestMockWindow {
 }
 
 /**
+ * Solflare Wallet Extension
+ */
+interface SolflareProvider extends SolanaWalletAdapter {
+  isSolflare?: boolean
+}
+
+/**
+ * Backpack Wallet Extension
+ */
+interface BackpackProvider extends SolanaWalletAdapter {
+  isBackpack?: boolean
+}
+
+/**
+ * Coinbase Solana Wallet Extension
+ */
+interface CoinbaseSolanaProvider extends SolanaWalletAdapter {
+  isCoinbaseWallet?: boolean
+}
+
+/**
  * Global Window Extensions
  */
 declare global {
   interface Window extends PhantomWindow, TestMockWindow {
     solana?: SolanaWalletAdapter
+    solflare?: SolflareProvider
+    backpack?: BackpackProvider
+    coinbaseSolana?: CoinbaseSolanaProvider
   }
 }
 

@@ -99,16 +99,19 @@ export function UsdcAtaChecker({
       )
 
       logger.info('Requesting wallet signature for ATA creation...')
-      const signedTx = await solana.signAndSendTransaction(transaction)
+      const signedTx = await solana.signTransaction(transaction)
+
+      logger.info('Sending signed transaction...')
+      const signature = await connection.sendRawTransaction(signedTx.serialize())
 
       logger.info('Waiting for confirmation...')
-      const confirmation = await connection.confirmTransaction(signedTx.signature, 'confirmed')
+      const confirmation = await connection.confirmTransaction(signature, 'confirmed')
 
       if (confirmation.value.err) {
         throw new Error('Transaction failed')
       }
 
-      logger.info('✅ USDC ATA created successfully!', { signature: signedTx.signature })
+      logger.info('✅ USDC ATA created successfully!', { signature })
 
       // Recheck ATA
       await checkAta()

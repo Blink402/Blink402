@@ -8,8 +8,17 @@ import {
   getBurnStats,
   getRecentBurns,
   getTotalBurned,
+  recordBurn,
+  createRun,
+  getBlinkBySlug,
 } from '@blink402/database'
-import { getBurnerWalletAddress, B402_DECIMALS } from '@blink402/solana'
+import {
+  getBurnerWalletAddress,
+  B402_DECIMALS,
+  burnB402Tokens,
+  isBurnEnabled,
+  getBurnAmount,
+} from '@blink402/solana'
 
 export const burnsRoutes: FastifyPluginAsync = async (fastify) => {
   /**
@@ -154,6 +163,76 @@ export const burnsRoutes: FastifyPluginAsync = async (fastify) => {
           walletAddress: null,
           error: 'Burner wallet not configured',
         },
+      })
+    }
+  })
+
+  /**
+   * POST /burns/test
+   * Test endpoint to trigger a burn (for testing purposes)
+   * This will burn B402 tokens and record in database
+   */
+  fastify.post('/test', async (request, reply) => {
+    try {
+      if (!isBurnEnabled()) {
+        return reply.code(503).send({
+          success: false,
+          error: 'Burns are not enabled',
+        })
+      }
+
+      fastify.log.info('🔥 Test burn requested...')
+
+      const burnAmount = getBurnAmount()
+      fastify.log.info(`Burning ${burnAmount} B402 tokens...`)
+
+      // Execute burn
+      const burnSignature = await burnB402Tokens(burnAmount)
+      fastify.log.info({ burnSignature }, 'Burn transaction sent')
+
+      // Create a test run entry
+      const blink = await getBlinkBySlug('criptonews') // Use any existing blink
+      if (!blink) {
+        throw new Error('No blinks available for test run')
+      }
+
+      const testRun = await createRun({
+        blinkId: blink.id,
+        reference: `test-burn-${Date.now()}`,
+        metadata: {
+          testBurn: true,
+          burnerWallet: getBurnerWalletAddress(),
+        },
+      })
+
+      // Record burn in database
+      const burnAmountBaseUnits = BigInt(
+        Math.floor(burnAmount * Math.pow(10, B402_DECIMALS))
+      )
+
+      await recordBurn({
+        runId: testRun.id,
+        amountB402: burnAmountBaseUnits,
+        txSignature: burnSignature,
+      })
+
+      fastify.log.info('✅ Test burn completed successfully')
+
+      return reply.code(200).send({
+        success: true,
+        data: {
+          burnAmount: burnAmount.toFixed(2),
+          txSignature: burnSignature,
+          solscanUrl: `https://solscan.io/tx/${burnSignature}`,
+          runId: testRun.id,
+          message: 'Test burn completed successfully',
+        },
+      })
+    } catch (error) {
+      fastify.log.error({ error }, 'Test burn failed')
+      return reply.code(500).send({
+        success: false,
+        error: error instanceof Error ? error.message : 'Test burn failed',
       })
     }
   })

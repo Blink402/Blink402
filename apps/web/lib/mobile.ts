@@ -3,18 +3,6 @@
  * Used to provide mobile-specific wallet connection UX
  */
 
-// Type declarations for wallet browser extensions
-declare global {
-  interface Window {
-    phantom?: {
-      solana?: any
-    }
-    solflare?: {
-      isSolflare?: boolean
-    }
-  }
-}
-
 /**
  * Detect if the user is on a mobile device
  * Checks user agent and touch capability

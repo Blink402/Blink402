@@ -29,7 +29,7 @@ export const B402_MINT = new PublicKey(B402_MINT_ADDRESS)
 
 // B402 token decimals (standard pump.fun tokens use 6 or 9 decimals)
 // TODO: Verify actual decimals for b402 token
-export const B402_DECIMALS = 9 // Most pump.fun tokens use 9 decimals
+export const B402_DECIMALS = 6 // B402 uses 6 decimals
 
 export type TokenHolderTier = 'NONE' | 'BRONZE' | 'SILVER' | 'GOLD' | 'DIAMOND'
 

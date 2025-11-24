@@ -237,11 +237,31 @@ function CheckoutPageContent() {
       }
 
       // Get the ACTUAL connected wallet from window.solana (not Privy's cached address)
-      const solana = window.solana || window.phantom?.solana
+      // Try multiple wallet adapters (Phantom, Solflare, Backpack, Coinbase)
+      const solana: any = window.solana || window.phantom?.solana || window.solflare || window.backpack || window.coinbaseSolana
 
-      if (!solana || !solana.publicKey) {
+      if (!solana) {
         throw new Error(
-          "No Solana wallet connected. Please ensure Phantom, Solflare, or another Solana wallet is installed and connected."
+          "No Solana wallet found. Please install Phantom, Solflare, Backpack, or Coinbase Wallet extension."
+        )
+      }
+
+      // If wallet is installed but not connected, try to connect it
+      if (!solana.publicKey && solana.connect) {
+        try {
+          await solana.connect()
+          logger.info('Connected to wallet:', solana.publicKey?.toBase58())
+        } catch (connectError: any) {
+          throw new Error(
+            `Please unlock your Solana wallet and connect it to this site. ${connectError.message || ''}`
+          )
+        }
+      }
+
+      // Verify we have a public key after connection attempt
+      if (!solana.publicKey) {
+        throw new Error(
+          "No Solana wallet connected. Please ensure your wallet is unlocked and connected to this site."
         )
       }
 

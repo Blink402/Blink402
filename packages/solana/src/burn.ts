@@ -179,22 +179,38 @@ export async function burnB402Tokens(
       burnInstruction
     )
 
-    // Send and confirm transaction
-    const signature = await sendAndConfirmTransaction(
-      conn,
-      transaction,
-      [burnerWallet],
-      {
-        commitment: 'confirmed',
-        maxRetries: 3,
-      }
-    )
+    // Get latest blockhash
+    const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash('finalized')
+    transaction.recentBlockhash = blockhash
+    transaction.lastValidBlockHeight = lastValidBlockHeight
+    transaction.feePayer = burnerWallet.publicKey
 
-    logger.info('B402 burn successful', {
+    // Sign transaction
+    transaction.sign(burnerWallet)
+
+    // Send transaction (don't wait for confirmation to avoid timeout issues)
+    const signature = await conn.sendRawTransaction(transaction.serialize(), {
+      skipPreflight: false,
+      maxRetries: 3,
+    })
+
+    logger.info('B402 burn transaction sent (confirmation pending)', {
       amount,
       signature,
       burnerAddress: burnerWallet.publicKey.toBase58(),
-      newBalance: currentBalance - amount,
+      expectedNewBalance: currentBalance - amount,
+    })
+
+    // Optional: Start confirmation check in background (don't await it)
+    conn.confirmTransaction({
+      signature,
+      blockhash,
+      lastValidBlockHeight,
+    }).catch((err) => {
+      logger.warn('Burn confirmation check failed (transaction may still succeed)', {
+        signature,
+        error: err.message,
+      })
     })
 
     return signature

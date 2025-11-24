@@ -71,7 +71,7 @@ export default function DashboardPage() {
           // Request signature from Solana wallet
           let signature: Uint8Array
           try {
-            const signResult = await solana.signMessage(messageBytes, 'utf8')
+            const signResult = await solana.signMessage(messageBytes)
             signature = signResult.signature
           } catch (signError: any) {
             if (signError.message?.includes('rejected') || signError.message?.includes('denied')) {
@@ -141,7 +141,7 @@ export default function DashboardPage() {
       // Request signature from Solana wallet
       let signature: Uint8Array
       try {
-        const signResult = await solana.signMessage(messageBytes, 'utf8')
+        const signResult = await solana.signMessage(messageBytes)
         signature = signResult.signature
       } catch (signError: any) {
         if (signError.message?.includes('rejected') || signError.message?.includes('denied')) {

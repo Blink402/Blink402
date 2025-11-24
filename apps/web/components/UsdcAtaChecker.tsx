@@ -162,45 +162,68 @@ export function UsdcAtaChecker({
   }
 
   return (
-    <Alert className="bg-yellow-500/10 border-yellow-500/30">
-      <AlertDescription className="text-yellow-300 font-mono text-sm">
-        <div className="space-y-3">
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
-            <p className="text-yellow-200 text-sm font-mono flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" /> Your wallet needs a USDC payment account to receive payments.
+    <Alert className="bg-yellow-500/10 border-2 border-yellow-500/40 shadow-lg">
+      <AlertDescription className="text-yellow-300 font-mono">
+        <div className="space-y-4">
+          {/* Main Warning Box - More Prominent */}
+          <div className="bg-yellow-500/20 border-2 border-yellow-500/50 rounded-lg p-5">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-6 h-6 mt-0.5 flex-shrink-0 text-yellow-300" />
+              <div>
+                <p className="text-yellow-200 font-bold text-base mb-2">
+                  ⚠️ USDC Payment Account Required
+                </p>
+                <p className="text-yellow-200/90 text-sm">
+                  Your wallet needs a USDC payment account to receive payments. Without this, users won't be able to pay you!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Explanation */}
+          <div className="text-sm text-yellow-200/80 bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-3">
+            <p className="mb-2"><strong className="text-yellow-200">What is this?</strong></p>
+            <p className="text-xs">
+              All Solana wallets need a special "token account" to hold USDC (like creating a folder for USDC). This is a one-time setup required by Solana's blockchain.
             </p>
           </div>
-          <div className="text-xs text-yellow-200/80">
-            This is a one-time setup. All Solana wallets need this to hold USDC tokens (like a special folder for USDC).
-          </div>
 
+          {/* Error Display */}
           {error && (
-            <div className="text-red-400 text-xs">
-              Error: {error}
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+              <p className="text-red-400 text-sm font-bold mb-1">❌ Error</p>
+              <p className="text-red-300 text-xs">{error}</p>
             </div>
           )}
 
+          {/* Wallet Connection Warning */}
           {!connectedWallet && (
-            <div className="text-red-400 text-xs">
-              ❌ Please connect your wallet in the top navigation bar first.
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+              <p className="text-red-400 text-sm font-bold">
+                ❌ Wallet Not Connected
+              </p>
+              <p className="text-red-300 text-xs mt-1">
+                Please connect your wallet in the top navigation bar first.
+              </p>
             </div>
           )}
 
-          <div className="flex gap-2">
+          {/* Action Buttons - Larger and More Prominent */}
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             {connectedWallet && (
               <Button
                 type="button"
                 onClick={createAta}
                 disabled={creating}
-                className="bg-yellow-600 hover:bg-yellow-700 text-white font-mono text-xs h-9"
+                className="bg-yellow-600 hover:bg-yellow-700 text-white font-mono text-sm h-11 flex-1 shadow-md font-bold"
               >
                 {creating ? (
                   <>
-                    <span className="inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Creating...
+                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    Creating Account...
                   </>
                 ) : (
-                  <>Create Payment Account</>
+                  <>✅ Create Payment Account Now</>
                 )}
               </Button>
             )}
@@ -210,18 +233,27 @@ export function UsdcAtaChecker({
               variant="outline"
               onClick={checkAta}
               disabled={checking || creating}
-              className="font-mono text-xs h-9"
+              className="font-mono text-sm h-11 border-yellow-500/30 hover:bg-yellow-500/10"
             >
-              Recheck
+              🔄 Recheck Status
             </Button>
           </div>
 
-          <div className="text-xs text-yellow-200/70">
-            {connectedWallet ? (
-              <>One-time cost: ~0.002 SOL (less than $0.10). This small fee creates the account on the Solana blockchain.</>
-            ) : (
-              <>Connect your wallet using the button in the top navigation bar to continue.</>
-            )}
+          {/* Cost Info - More Prominent */}
+          <div className="bg-neon-dark border border-yellow-500/20 rounded-lg p-3">
+            <p className="text-xs text-yellow-200/70">
+              {connectedWallet ? (
+                <>
+                  <strong className="text-yellow-200">One-time cost:</strong> ~0.002 SOL (less than $0.10)
+                  <br />
+                  <span className="text-yellow-200/60">This small fee creates the account permanently on the Solana blockchain.</span>
+                </>
+              ) : (
+                <>
+                  <strong className="text-yellow-200">Next step:</strong> Connect your wallet using the button in the top navigation bar.
+                </>
+              )}
+            </p>
           </div>
         </div>
       </AlertDescription>

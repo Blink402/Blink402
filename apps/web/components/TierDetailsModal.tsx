@@ -31,13 +31,13 @@ export default function TierDetailsModal({
   const tiers: Array<Exclude<TokenHolderTier, 'NONE'>> = ['BRONZE', 'SILVER', 'GOLD', 'DIAMOND']
 
   return (
-    <div className="space-y-8">
-      <DialogHeader className="space-y-3">
+    <div className="space-y-6">
+      <DialogHeader className="space-y-4">
         <DialogTitle className="text-2xl sm:text-3xl font-sans font-light text-neon-white flex items-center gap-3">
           <span className="text-3xl sm:text-4xl">{getTierDisplayInfo(currentTier).icon}</span>
           <span>B402 Token Holder Tiers</span>
         </DialogTitle>
-        <DialogDescription className="text-neon-grey font-mono text-sm sm:text-base">
+        <DialogDescription className="text-neon-grey font-mono text-sm sm:text-base leading-relaxed">
           Hold B402 tokens to unlock exclusive discounts and benefits across the platform
         </DialogDescription>
       </DialogHeader>
@@ -45,12 +45,12 @@ export default function TierDetailsModal({
       {/* Current Status */}
       {currentTier !== 'NONE' && (
         <div
-          className="p-4 sm:p-6 rounded-lg bg-green-900/10 border-2 border-dashed border-green-500/40"
+          className="p-5 sm:p-7 rounded-lg bg-green-900/10 border-2 border-dashed border-green-500/40"
           style={{
             boxShadow: '0 0 16px rgba(34, 197, 94, 0.15)'
           }}
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-green-400 font-mono text-sm font-bold">Your Current Tier:</span>
               <Badge className="bg-green-500/20 text-green-400 border-green-500/30 font-mono">
@@ -90,15 +90,15 @@ export default function TierDetailsModal({
 
       {currentTier === 'NONE' && nextTierInfo && (
         <div
-          className="p-4 sm:p-6 rounded-lg bg-yellow-900/10 border-2 border-dashed border-yellow-500/40"
+          className="p-5 sm:p-7 rounded-lg bg-yellow-900/10 border-2 border-dashed border-yellow-500/40"
           style={{
             boxShadow: '0 0 16px rgba(234, 179, 8, 0.15)'
           }}
         >
-          <p className="text-yellow-400 font-mono text-sm font-bold mb-2">
+          <p className="text-yellow-400 font-mono text-sm font-bold mb-3">
             You're {nextTierInfo.tokensNeeded.toLocaleString()} B402 away from Bronze tier!
           </p>
-          <p className="text-yellow-300 font-mono text-xs">
+          <p className="text-yellow-300 font-mono text-xs leading-relaxed">
             Start saving on every transaction by holding B402 tokens.
           </p>
         </div>
@@ -106,9 +106,9 @@ export default function TierDetailsModal({
 
       {/* Tier Comparison Table */}
       <div className="space-y-4">
-        <h3 className="text-lg sm:text-xl font-mono font-bold text-neon-white">Tier Benefits Comparison</h3>
-        <div className="overflow-x-auto -mx-2 sm:mx-0">
-          <div className="inline-block min-w-full px-2 sm:px-0">
+        <h3 className="text-base sm:text-lg lg:text-xl font-mono font-bold text-neon-white mb-1">Tier Benefits Comparison</h3>
+        <div className="overflow-x-auto -mx-4 sm:-mx-6 lg:mx-0">
+          <div className="inline-block min-w-full px-4 sm:px-6 lg:px-0">
             <table className="w-full border-collapse bg-neon-dark/50 rounded-lg border-2 border-dashed border-neon-blue-dark/40"
               style={{
                 boxShadow: 'inset 0 0 20px rgba(0, 0, 0, 0.5)'
@@ -116,7 +116,7 @@ export default function TierDetailsModal({
             >
               <thead>
                 <tr className="border-b-2 border-neon-blue-light/50">
-                  <th className="p-3 sm:p-4 text-left text-neon-white font-mono text-xs sm:text-sm sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Benefit</th>
+                  <th className="p-2 sm:p-3 lg:p-4 text-left text-neon-white font-mono text-[10px] sm:text-xs lg:text-sm sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20 min-w-[80px] sm:min-w-[100px]">Benefit</th>
                 {tiers.map((tier) => {
                   const tierInfo = getTierDisplayInfo(tier)
                   const isCurrentTier = tier === currentTier
@@ -124,17 +124,17 @@ export default function TierDetailsModal({
                     <th
                       key={tier}
                       className={cn(
-                        "p-3 sm:p-4 text-center font-mono text-xs sm:text-sm min-w-[90px] sm:min-w-[120px]",
+                        "p-2 sm:p-3 lg:p-4 text-center font-mono text-[10px] sm:text-xs lg:text-sm w-[70px] sm:w-[90px] lg:w-[110px]",
                         isCurrentTier && "bg-green-900/20 border-l-2 border-r-2 border-green-500/40"
                       )}
                       style={isCurrentTier ? {
                         boxShadow: 'inset 0 0 16px rgba(34, 197, 94, 0.2), 0 0 8px rgba(34, 197, 94, 0.3)'
                       } : {}}
                     >
-                      <div className="flex flex-col items-center gap-1.5">
-                        <span className="text-2xl sm:text-3xl">{tierInfo.icon}</span>
+                      <div className="flex flex-col items-center gap-1 sm:gap-1.5 lg:gap-2">
+                        <span className="text-xl sm:text-2xl lg:text-3xl">{tierInfo.icon}</span>
                         <span className={cn(
-                          "text-xs sm:text-sm font-bold",
+                          "text-[10px] sm:text-xs lg:text-sm font-bold",
                           tier === 'BRONZE' && "text-amber-600",
                           tier === 'SILVER' && "text-gray-400",
                           tier === 'GOLD' && "text-yellow-400",
@@ -142,11 +142,11 @@ export default function TierDetailsModal({
                         )}>
                           {tier}
                         </span>
-                        <span className="text-neon-grey text-[10px] sm:text-xs">
-                          {thresholds[tier].toLocaleString()} B402
+                        <span className="text-neon-grey text-[8px] sm:text-[10px] lg:text-xs whitespace-nowrap">
+                          {thresholds[tier] >= 1000 ? `${(thresholds[tier] / 1000).toFixed(0)}k` : thresholds[tier]} B402
                         </span>
                         {isCurrentTier && (
-                          <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-[10px] px-1.5 py-0.5 font-mono mt-1">
+                          <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-[8px] sm:text-[10px] px-1 py-0 font-mono mt-0.5">
                             ACTIVE
                           </Badge>
                         )}
@@ -156,44 +156,44 @@ export default function TierDetailsModal({
                 })}
               </tr>
             </thead>
-            <tbody className="text-neon-grey font-mono text-xs sm:text-sm">
+            <tbody className="text-neon-grey font-mono text-[10px] sm:text-xs lg:text-sm">
             {/* Slot Machine Benefits */}
             <tr className="border-b-2 border-neon-grey/30 bg-neon-dark/20">
-              <td className="p-3 sm:p-4 font-bold text-neon-white sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20" colSpan={5}>
-                <span className="flex items-center gap-2"><Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5" /> Slot Machine</span>
+              <td className="p-2 sm:p-3 lg:p-4 font-bold text-neon-white sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20" colSpan={5}>
+                <span className="flex items-center gap-1.5 sm:gap-2"><Gamepad2 className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" /> <span className="whitespace-nowrap">Slot Machine</span></span>
               </td>
             </tr>
             <tr className="border-b border-neon-grey/10 hover:bg-neon-blue-dark/10 transition-colors">
-              <td className="p-3 sm:p-4 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Entry Discount</td>
+              <td className="p-2 sm:p-2.5 lg:p-3 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Entry Discount</td>
               {tiers.map((tier) => {
                 const benefits = allBenefits[tier]
                 const isCurrentTier = tier === currentTier
                 return (
-                  <td key={tier} className={cn("p-3 sm:p-4 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
+                  <td key={tier} className={cn("p-2 sm:p-2.5 lg:p-3 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
                     <span className="font-bold text-neon-white">{benefits.slotMachine.discountPercent}%</span>
                   </td>
                 )
               })}
             </tr>
             <tr className="border-b border-neon-grey/10 hover:bg-neon-blue-dark/10 transition-colors">
-              <td className="p-3 sm:p-4 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Payout Multiplier</td>
+              <td className="p-2 sm:p-2.5 lg:p-3 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20 whitespace-nowrap">Payout Multiplier</td>
               {tiers.map((tier) => {
                 const benefits = allBenefits[tier]
                 const isCurrentTier = tier === currentTier
                 return (
-                  <td key={tier} className={cn("p-3 sm:p-4 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
+                  <td key={tier} className={cn("p-2 sm:p-2.5 lg:p-3 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
                     <span className="font-bold text-neon-white">{benefits.slotMachine.bonusMultiplier}x</span>
                   </td>
                 )
               })}
             </tr>
             <tr className="border-b-2 border-neon-grey/30 hover:bg-neon-blue-dark/10 transition-colors">
-              <td className="p-3 sm:p-4 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Free Spins/Day</td>
+              <td className="p-2 sm:p-2.5 lg:p-3 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20 whitespace-nowrap">Free Spins/Day</td>
               {tiers.map((tier) => {
                 const benefits = allBenefits[tier]
                 const isCurrentTier = tier === currentTier
                 return (
-                  <td key={tier} className={cn("p-3 sm:p-4 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
+                  <td key={tier} className={cn("p-2 sm:p-2.5 lg:p-3 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
                     <span className="font-bold text-neon-white">{benefits.slotMachine.freeSpinsDaily}</span>
                   </td>
                 )
@@ -202,41 +202,41 @@ export default function TierDetailsModal({
 
             {/* Lottery Benefits */}
             <tr className="border-b-2 border-neon-grey/30 bg-neon-dark/20">
-              <td className="p-3 sm:p-4 font-bold text-neon-white sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20" colSpan={5}>
-                <span className="flex items-center gap-2"><Ticket className="w-4 h-4 sm:w-5 sm:h-5" /> Lottery</span>
+              <td className="p-2 sm:p-3 lg:p-4 font-bold text-neon-white sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20" colSpan={5}>
+                <span className="flex items-center gap-1.5 sm:gap-2"><Ticket className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" /> Lottery</span>
               </td>
             </tr>
             <tr className="border-b border-neon-grey/10 hover:bg-neon-blue-dark/10 transition-colors">
-              <td className="p-3 sm:p-4 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Entry Discount</td>
+              <td className="p-2 sm:p-2.5 lg:p-3 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Entry Discount</td>
               {tiers.map((tier) => {
                 const benefits = allBenefits[tier]
                 const isCurrentTier = tier === currentTier
                 return (
-                  <td key={tier} className={cn("p-3 sm:p-4 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
+                  <td key={tier} className={cn("p-2 sm:p-2.5 lg:p-3 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
                     <span className="font-bold text-neon-white">{benefits.lottery.discountPercent}%</span>
                   </td>
                 )
               })}
             </tr>
             <tr className="border-b border-neon-grey/10 hover:bg-neon-blue-dark/10 transition-colors">
-              <td className="p-3 sm:p-4 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Bonus Entries</td>
+              <td className="p-2 sm:p-2.5 lg:p-3 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Bonus Entries</td>
               {tiers.map((tier) => {
                 const benefits = allBenefits[tier]
                 const isCurrentTier = tier === currentTier
                 return (
-                  <td key={tier} className={cn("p-3 sm:p-4 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
+                  <td key={tier} className={cn("p-2 sm:p-2.5 lg:p-3 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
                     <span className="font-bold text-neon-white">+{benefits.lottery.bonusEntries}</span>
                   </td>
                 )
               })}
             </tr>
             <tr className="border-b-2 border-neon-grey/30 hover:bg-neon-blue-dark/10 transition-colors">
-              <td className="p-3 sm:p-4 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Win Boost</td>
+              <td className="p-2 sm:p-2.5 lg:p-3 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Win Boost</td>
               {tiers.map((tier) => {
                 const benefits = allBenefits[tier]
                 const isCurrentTier = tier === currentTier
                 return (
-                  <td key={tier} className={cn("p-3 sm:p-4 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
+                  <td key={tier} className={cn("p-2 sm:p-2.5 lg:p-3 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
                     <span className="font-bold text-neon-white">+{benefits.lottery.winBoostPercent}%</span>
                   </td>
                 )
@@ -245,42 +245,42 @@ export default function TierDetailsModal({
 
             {/* Blink Benefits */}
             <tr className="border-b-2 border-neon-grey/30 bg-neon-dark/20">
-              <td className="p-3 sm:p-4 font-bold text-neon-white sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20" colSpan={5}>
-                <span className="flex items-center gap-2"><Zap className="w-4 h-4 sm:w-5 sm:h-5" /> API Blinks</span>
+              <td className="p-2 sm:p-3 lg:p-4 font-bold text-neon-white sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20" colSpan={5}>
+                <span className="flex items-center gap-1.5 sm:gap-2"><Zap className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" /> API Blinks</span>
               </td>
             </tr>
             <tr className="border-b border-neon-grey/10 hover:bg-neon-blue-dark/10 transition-colors">
-              <td className="p-3 sm:p-4 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Creator Fee Discount</td>
+              <td className="p-2 sm:p-2.5 lg:p-3 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20 whitespace-nowrap">Creator Fee Discount</td>
               {tiers.map((tier) => {
                 const benefits = allBenefits[tier]
                 const isCurrentTier = tier === currentTier
                 return (
-                  <td key={tier} className={cn("p-3 sm:p-4 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
+                  <td key={tier} className={cn("p-2 sm:p-2.5 lg:p-3 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
                     <span className="font-bold text-neon-white">{benefits.blinks.creatorFeeDiscount}%</span>
                   </td>
                 )
               })}
             </tr>
             <tr className="border-b border-neon-grey/10 hover:bg-neon-blue-dark/10 transition-colors">
-              <td className="p-3 sm:p-4 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Priority Execution</td>
+              <td className="p-2 sm:p-2.5 lg:p-3 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20 whitespace-nowrap">Priority Execution</td>
               {tiers.map((tier) => {
                 const benefits = allBenefits[tier]
                 const isCurrentTier = tier === currentTier
                 return (
-                  <td key={tier} className={cn("p-3 sm:p-4 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
-                    {benefits.blinks.priorityExecution ? <Check className="w-4 h-4 sm:w-5 sm:h-5 mx-auto text-green-400" /> : <span className="text-neon-grey">—</span>}
+                  <td key={tier} className={cn("p-2 sm:p-2.5 lg:p-3 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
+                    {benefits.blinks.priorityExecution ? <Check className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mx-auto text-green-400" /> : <span className="text-neon-grey">—</span>}
                   </td>
                 )
               })}
             </tr>
             <tr className="hover:bg-neon-blue-dark/10 transition-colors">
-              <td className="p-3 sm:p-4 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20">Custom Branding</td>
+              <td className="p-2 sm:p-2.5 lg:p-3 sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20 whitespace-nowrap">Custom Branding</td>
               {tiers.map((tier) => {
                 const benefits = allBenefits[tier]
                 const isCurrentTier = tier === currentTier
                 return (
-                  <td key={tier} className={cn("p-3 sm:p-4 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
-                    {benefits.blinks.customBranding ? <Check className="w-4 h-4 sm:w-5 sm:h-5 mx-auto text-green-400" /> : <span className="text-neon-grey">—</span>}
+                  <td key={tier} className={cn("p-2 sm:p-2.5 lg:p-3 text-center", isCurrentTier && "bg-green-900/10 border-l-2 border-r-2 border-green-500/20")}>
+                    {benefits.blinks.customBranding ? <Check className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mx-auto text-green-400" /> : <span className="text-neon-grey">—</span>}
                   </td>
                 )
               })}
@@ -292,7 +292,7 @@ export default function TierDetailsModal({
       </div>
 
       {/* CTA Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3 sm:justify-end pt-6 border-t-2 border-dashed border-neon-blue-dark/30">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end pt-8 mt-2 border-t-2 border-dashed border-neon-blue-dark/30">
         {nextTierInfo && (
           <Link
             href={`https://jup.ag/tokens/2mESiwuVdfft9PxG7x36rvDvex6ccyY8m8BKCWJqpump`}

@@ -8,6 +8,7 @@ import { mountScramble } from "@/lib/scramble"
 import { createBlink } from "@/lib/api"
 import { usePrivy, useWallets } from "@privy-io/react-auth"
 import { generateAuthMessage, createAuthToken, encodeAuthToken } from "@/lib/auth"
+import { AlertTriangle } from "lucide-react"
 import NeonDivider from "@/components/NeonDivider"
 import Lottie from "@/components/Lottie"
 import { AIEndpointFinder } from "@/components/AIEndpointFinder"
@@ -752,7 +753,7 @@ function CreateBlinkPageContent() {
                   <div>
                     <Label htmlFor="payment_token" className="text-neon-white font-mono flex items-center gap-2">
                       Payment Token *
-                      <HelpTooltip content="SOL = Solana's native cryptocurrency (price fluctuates, lowest fees). USDC = Stablecoin pegged to US Dollar (stable price, predictable earnings). New users often prefer USDC for predictable pricing." />
+                      <HelpTooltip content="SOL = Solana's native cryptocurrency (price fluctuates, lowest fees). USDC = USD Stablecoin (stable price, predictable earnings). ⚠️ IMPORTANT for USDC: Your payout wallet MUST have a USDC token account (ATA) to receive payments. We'll help you create one below if needed (~$0.10 one-time cost)." />
                     </Label>
                     <Select
                       value={formValues.payment_token}
@@ -772,6 +773,26 @@ function CreateBlinkPageContent() {
                         : "SOL is Solana's native token with lowest fees - price varies with market"}
                     </FormHelp>
                   </div>
+
+                  {/* USDC Requirement Info Alert */}
+                  {formValues.payment_token === "USDC" && (
+                    <Alert className="bg-blue-500/10 border-blue-500/30">
+                      <AlertDescription>
+                        <div className="text-blue-300 font-mono text-sm">
+                          <div className="flex items-start gap-2 mb-2">
+                            <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                            <strong className="text-blue-200">USDC Payment Account Required</strong>
+                          </div>
+                          <p className="text-xs mb-2 text-blue-200/90">
+                            To receive USDC payments, your payout wallet <strong>MUST</strong> have a USDC token account (Associated Token Account / ATA).
+                          </p>
+                          <p className="text-xs text-blue-200/70">
+                            Don't worry! We'll check your wallet below and help you create one if needed. One-time cost: ~0.002 SOL (less than $0.10).
+                          </p>
+                        </div>
+                      </AlertDescription>
+                    </Alert>
+                  )}
 
                   {/* Charge Mode Fields */}
                   {formValues.payment_mode === "charge" && (
@@ -816,6 +837,16 @@ function CreateBlinkPageContent() {
                           Payout Wallet (Solana) *
                           <HelpTooltip content="Your Solana wallet address where you'll receive payments. This should be YOUR wallet address (starts with a letter or number, 32-44 characters). Payments are sent here instantly when users pay." />
                         </Label>
+
+                        {/* Educational message when USDC selected but no wallet entered */}
+                        {formValues.payment_token === "USDC" && (!formValues.payout_wallet || formValues.payout_wallet.length < 32) && (
+                          <Alert className="mt-2 mb-2 bg-blue-500/5 border-blue-500/20">
+                            <AlertDescription className="text-blue-300 font-mono text-xs">
+                              👇 Enter your payout wallet below and we'll automatically check if it's ready to receive USDC payments
+                            </AlertDescription>
+                          </Alert>
+                        )}
+
                         <Input
                           id="payout_wallet"
                           {...register("payout_wallet")}

@@ -201,7 +201,7 @@ export function TierBadgeWidget({ variant = 'desktop', className }: TierBadgeWid
       </DialogTrigger>
 
       <DialogContent
-        className="max-w-5xl max-h-[90vh] overflow-y-auto bg-neon-black border-2 border-dashed border-neon-blue-light p-6 sm:p-8"
+        className="max-w-[95vw] sm:max-w-4xl max-h-[90vh] overflow-y-auto bg-neon-black border-2 border-dashed border-neon-blue-light p-4 sm:p-6 lg:p-8"
         style={{
           boxShadow: '0 0 40px rgba(90, 180, 255, 0.3), inset 0 0 60px rgba(0, 0, 0, 0.8)'
         }}

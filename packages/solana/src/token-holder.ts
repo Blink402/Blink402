@@ -255,31 +255,31 @@ export function getTierDisplayInfo(tier: TokenHolderTier): {
 } {
   const displayInfo = {
     NONE: {
-      icon: '⚫',
+      icon: '[ ]',
       color: 'gray-500',
       label: 'No Tier',
       gradient: 'from-gray-600/40 to-gray-400/40'
     },
     BRONZE: {
-      icon: '🥉',
+      icon: '[B]',
       color: 'amber-700',
       label: 'Bronze Tier',
       gradient: 'from-amber-900/40 to-amber-700/40'
     },
     SILVER: {
-      icon: '🥈',
+      icon: '[S]',
       color: 'gray-400',
       label: 'Silver Tier',
       gradient: 'from-gray-600/40 to-gray-400/40'
     },
     GOLD: {
-      icon: '🥇',
+      icon: '[G]',
       color: 'yellow-400',
       label: 'Gold Tier',
       gradient: 'from-yellow-600/40 to-yellow-400/40'
     },
     DIAMOND: {
-      icon: '💎',
+      icon: '[D]',
       color: 'cyan-400',
       label: 'Diamond Tier',
       gradient: 'from-cyan-600/40 to-blue-500/40'

@@ -1,6 +1,8 @@
 // Solana helper utilities for Blink402
 // Handles USDC transfers, payment verification, and transaction building
 
+/// <reference path="./solana-internals.d.ts" />
+
 import { createLogger } from '@blink402/config'
 
 const logger = createLogger('@blink402/solana')
@@ -79,6 +81,18 @@ export {
   type TokenHolderInfo,
   type TokenBenefits,
 } from './token-holder'
+
+// Export B402 burn functions for deflationary tokenomics
+export {
+  burnB402Tokens,
+  getBurnerWallet,
+  getBurnerWalletAddress,
+  getBurnerWalletBalance,
+  isBurnEnabled,
+  getBurnAmount,
+  estimateBurnCost,
+  getEstimatedBurnsRemaining,
+} from './burn'
 
 // Export spam token detection
 export {
@@ -995,7 +1009,6 @@ async function getTransactionRaw(connection: Connection, signature: string, opti
   maxSupportedTransactionVersion?: number
 }): Promise<any> {
   // Make raw RPC call bypassing web3.js validation
-  // @ts-ignore - accessing internal _rpcRequest method
   const result = await connection._rpcRequest('getTransaction', [
     signature,
     {
@@ -1078,9 +1091,15 @@ export async function verifyPayment(params: {
 }> {
   const { connection, reference, recipient, amount, splToken, timeout = 30000 } = params
 
-  // MOCK MODE for testing (enabled via MOCK_PAYMENTS=true env var)
+  // ===== MOCK MODE FOR TESTING ONLY =====
+  // Enabled via MOCK_PAYMENTS=true env var in development/test environments
   // This allows tests to run without hitting real Solana RPC endpoints
-  // NEVER enable in production (enforced by @blink402/config)
+  //
+  // ⚠️  PRODUCTION SAFETY: This block can NEVER execute in production
+  // - Double-check guard prevents execution if NODE_ENV === 'production'
+  // - Even if MOCK_PAYMENTS is mistakenly set to 'true', NODE_ENV check blocks it
+  // - See packages/config/src/index.ts:isMockPaymentsEnabled() for additional enforcement
+  // =======================================
   if (process.env.MOCK_PAYMENTS === 'true' && process.env.NODE_ENV !== 'production') {
     // Generate a deterministic "signature" based on reference
     // This allows idempotency testing (same reference = same mock signature)

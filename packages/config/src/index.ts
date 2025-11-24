@@ -33,14 +33,29 @@ interface EnvConfig {
 
   // API Security
   INTERNAL_API_KEY?: string
+  ENCRYPTION_KEY?: string // Required for creator payout key encryption
 
   // AI Services (Optional - demos work with mock data if not provided)
   OPENAI_API_KEY?: string
   DEEPAI_API_KEY?: string
   SCREENSHOT_API_KEY?: string
 
-  // Slot Machine (Optional - only needed if hosting slot machine blink)
+  // Slot Machine & Lottery (Optional - only needed if hosting these blinks)
   SLOT_MACHINE_PAYOUT_PRIVATE_KEY?: string
+  LOTTERY_PLATFORM_KEYPAIR?: string
+
+  // B402 Token Configuration
+  B402_MINT_ADDRESS?: string
+  NEXT_PUBLIC_B402_MINT?: string
+  B402_MINT?: string // Fallback alias
+  RAYDIUM_POOL_ID?: string
+  RAYDIUM_B402_SOL_POOL_ID?: string // Fallback alias
+
+  // Wallet Authentication
+  NEXT_PUBLIC_PRIVY_APP_ID?: string
+
+  // Enhanced RPC
+  HELIUS_API_KEY?: string
 
   // Admin (Optional - required for admin endpoints)
   ADMIN_API_KEY?: string
@@ -71,10 +86,19 @@ const OPTIONAL_ENV_VARS = [
   'TREASURY_WALLET',
   'PAYOUT_WALLET',
   'INTERNAL_API_KEY',
+  'ENCRYPTION_KEY',
   'OPENAI_API_KEY',
   'DEEPAI_API_KEY',
   'SCREENSHOT_API_KEY',
+  'HELIUS_API_KEY',
   'SLOT_MACHINE_PAYOUT_PRIVATE_KEY',
+  'LOTTERY_PLATFORM_KEYPAIR',
+  'B402_MINT_ADDRESS',
+  'NEXT_PUBLIC_B402_MINT',
+  'B402_MINT',
+  'RAYDIUM_POOL_ID',
+  'RAYDIUM_B402_SOL_POOL_ID',
+  'NEXT_PUBLIC_PRIVY_APP_ID',
   'ADMIN_API_KEY',
   'MOCK_PAYMENTS',
   'NODE_ENV',
@@ -132,10 +156,19 @@ export function validateEnv(): EnvConfig {
     TREASURY_WALLET: process.env.TREASURY_WALLET,
     PAYOUT_WALLET: process.env.PAYOUT_WALLET,
     INTERNAL_API_KEY: process.env.INTERNAL_API_KEY,
+    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     DEEPAI_API_KEY: process.env.DEEPAI_API_KEY,
     SCREENSHOT_API_KEY: process.env.SCREENSHOT_API_KEY,
+    HELIUS_API_KEY: process.env.HELIUS_API_KEY,
     SLOT_MACHINE_PAYOUT_PRIVATE_KEY: process.env.SLOT_MACHINE_PAYOUT_PRIVATE_KEY,
+    LOTTERY_PLATFORM_KEYPAIR: process.env.LOTTERY_PLATFORM_KEYPAIR,
+    B402_MINT_ADDRESS: process.env.B402_MINT_ADDRESS,
+    NEXT_PUBLIC_B402_MINT: process.env.NEXT_PUBLIC_B402_MINT,
+    B402_MINT: process.env.B402_MINT,
+    RAYDIUM_POOL_ID: process.env.RAYDIUM_POOL_ID,
+    RAYDIUM_B402_SOL_POOL_ID: process.env.RAYDIUM_B402_SOL_POOL_ID,
+    NEXT_PUBLIC_PRIVY_APP_ID: process.env.NEXT_PUBLIC_PRIVY_APP_ID,
     ADMIN_API_KEY: process.env.ADMIN_API_KEY,
     MOCK_PAYMENTS: process.env.MOCK_PAYMENTS === 'true',
     NODE_ENV: process.env.NODE_ENV || 'development',

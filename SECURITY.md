@@ -8,7 +8,7 @@ We take security seriously and appreciate responsible disclosure.
 
 ### How to Report
 
-**Email:** security@[yourdomain].com
+**Email:** security@blink402.dev (or create a private GitHub Security Advisory)
 
 **Include in your report:**
 1. Description of the vulnerability
@@ -48,10 +48,13 @@ We take security seriously and appreciate responsible disclosure.
 
 ### Payment Security
 
+- **PayAI x402 Integration**: Client-side transaction building with PayAI fee payer (prevents MEV injection)
 - **On-chain verification**: All payments verified on Solana blockchain before API execution
-- **Idempotency**: Reference UUIDs prevent double-spending
+- **Facilitator settlement**: PayAI handles payment verification and on-chain settlement
+- **Idempotency**: Reference UUIDs + Redis distributed locking prevent double-spending
 - **Amount validation**: Exact USDC amount and recipient verified
-- **No private key storage**: Application never handles private keys
+- **No private key storage**: Application never handles private keys (client-side signing)
+- **Encrypted creator keys**: Payout keys encrypted with AES-256-GCM using ENCRYPTION_KEY
 
 ### API Security
 
@@ -101,9 +104,11 @@ We support the latest major version. Security updates backported to previous maj
 
 ### Rate Limiting
 
-- **Current implementation**: In-memory (resets on restart)
-- **Planned improvement**: Redis-backed rate limiting for distributed deployments
-- **Bypass potential**: Changing IP/wallet can bypass current limits (acceptable for MVP)
+- **Production implementation**: Redis-backed distributed rate limiting
+- **Development fallback**: In-memory rate limiting (resets on restart)
+- **Limits**: 100 req/min per IP, 10 req/hour per wallet (charge mode), 5 req/hour (reward mode)
+- **Bypass mitigation**: Per-wallet rate limiting prevents simple IP rotation
+- **Challenge-response**: Reward mode requires signature verification (anti-spam)
 
 ### Upstream API Calls
 
@@ -111,6 +116,44 @@ We support the latest major version. Security updates backported to previous maj
 - **User risk**: Upstream API security is user's responsibility
 - **Timeout protection**: 30-second timeout prevents hanging requests
 - **Content filtering**: Only whitelisted content-types returned
+
+## 🚀 Deployment Security
+
+### Critical Environment Variables
+
+**⚠️ ENCRYPTION_KEY** (REQUIRED):
+- Generate ONCE: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+- Store securely in Railway/AWS Secrets Manager
+- **NEVER commit to git or share**
+- **IF LOST**: All creator payout keys become PERMANENTLY unrecoverable
+- Rotation requires re-encrypting all existing keys (no automated process yet)
+
+**🔑 LOTTERY_PLATFORM_KEYPAIR** (REQUIRED for lottery/slots):
+- JSON array format: `[31,174,117,179,...]`
+- Generate: `solana-keygen new --outfile keypair.json && cat keypair.json`
+- Store securely - controls platform wallet for payouts
+- Use separate wallets for dev/staging/production
+
+**🛡️ INTERNAL_API_KEY** (RECOMMENDED):
+- Generate: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+- Protects catalog publishing and admin endpoints
+- If not set, internal endpoints are unprotected (dangerous!)
+
+**🔗 Redis** (REQUIRED in production):
+- Distributed rate limiting requires Redis
+- Development works without Redis (in-memory fallback)
+- Use Redis with SSL/TLS in production
+
+### Infrastructure Checklist
+
+- [ ] All secrets stored in secure vault (not .env files)
+- [ ] SSL/TLS enabled for PostgreSQL connection
+- [ ] Redis connection uses SSL (rediss://)
+- [ ] Separate Solana wallets for dev/staging/production
+- [ ] Backup `ENCRYPTION_KEY` in multiple secure locations
+- [ ] Rate limiting tested and verified
+- [ ] CORS configured for production domain only
+- [ ] Monitoring/alerting configured for unusual activity
 
 ## 🚨 Security Best Practices for Users
 
@@ -202,10 +245,15 @@ We plan to launch a bug bounty program in the future. Stay tuned!
 
 ## 📞 Contact
 
-- **Security issues**: security@[domain].com
-- **General questions**: [GitHub Discussions](https://github.com/yourorg/BlinkBazaar/discussions)
-- **Non-security bugs**: [GitHub Issues](https://github.com/yourorg/BlinkBazaar/issues)
+- **Security issues**: security@blink402.dev
+- **General support**: support@blink402.dev
+- **GitHub**: https://github.com/anthropics/blink402 (update with actual repo)
+- **General questions**: [GitHub Discussions](https://github.com/anthropics/blink402/discussions)
+- **Non-security bugs**: [GitHub Issues](https://github.com/anthropics/blink402/issues)
 
 ---
 
-**Thank you for helping keep BlinkBazaar and our users safe!** 🙏
+**Thank you for helping keep Blink402 and our users safe!** 🙏
+
+**Last Updated**: January 2025
+**Current Version**: 0.1.x

@@ -87,7 +87,6 @@ function TestPaymentContent() {
       addLog("Step 3: Signing transaction with wallet...")
 
       // Use standard Solana wallet adapter (window.solana)
-      // @ts-ignore
       const solana = window.solana || window.phantom?.solana
 
       if (!solana || !solana.signTransaction) {

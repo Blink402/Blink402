@@ -108,6 +108,7 @@ import { lotteryRoutes } from './routes/lottery.js'
 import { actionsSubmitRoutes } from './routes/actions-submit.js'
 import { referralRoutes } from './routes/referrals.js'
 import { tokenRoutes } from './routes/token.js'
+import { burnsRoutes } from './routes/burns.js'
 
 const PORT = parseInt(process.env.PORT || '3001', 10)
 const HOST = process.env.HOST || '0.0.0.0'
@@ -330,6 +331,7 @@ await fastify.register(lotteryRoutes, { prefix: '/lottery' })
 await fastify.register(actionsSlotMachineRoutes, { prefix: '/actions/slot-machine' })
 await fastify.register(referralRoutes, { prefix: '/referrals' })
 await fastify.register(tokenRoutes, { prefix: '/token' })
+await fastify.register(burnsRoutes, { prefix: '/burns' })
 
 // Root endpoint
 fastify.get('/', async () => {

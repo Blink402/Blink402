@@ -237,7 +237,6 @@ function CheckoutPageContent() {
       }
 
       // Get the ACTUAL connected wallet from window.solana (not Privy's cached address)
-      // @ts-ignore
       const solana = window.solana || window.phantom?.solana
 
       if (!solana || !solana.publicKey) {

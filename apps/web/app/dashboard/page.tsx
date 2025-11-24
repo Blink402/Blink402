@@ -55,7 +55,6 @@ export default function DashboardPage() {
           const { message } = generateAuthMessage(wallet)
 
           // Use window.solana for signing
-          // @ts-ignore
           const solana = window.solana || window.phantom?.solana
 
           if (!solana) {
@@ -126,7 +125,6 @@ export default function DashboardPage() {
       const { message } = generateAuthMessage(wallet)
 
       // Use window.solana for signing (same pattern as create page)
-      // @ts-ignore
       const solana = window.solana || window.phantom?.solana
 
       if (!solana) {

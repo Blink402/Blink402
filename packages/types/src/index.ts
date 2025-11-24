@@ -1,5 +1,8 @@
 // Shared type definitions for Blink402 monorepo
 
+// Import type declarations for browser
+import './window.d.ts'
+
 // ========== CORE DATABASE ENTITIES ==========
 
 export interface Creator {

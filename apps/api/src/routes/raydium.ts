@@ -83,24 +83,26 @@ export const raydiumRoutes: FastifyPluginAsync = async (fastify) => {
       fastify.log.info('[RAYDIUM] Step 6: Fetching Raydium pool info from chain')
       const connection = getConnection()
 
-      // NOTE: We need to find the actual Raydium pool ID for SOL-B402
-      // This is a placeholder - in production, we'd fetch this from Raydium's pool list
-      // or use Jupiter aggregator which routes through multiple DEXs
-      const poolId = new PublicKey('PLACEHOLDER_POOL_ID') // TODO: Get actual pool ID
+      // NOTE: Raydium pool ID for SOL-B402 must be configured via environment variable
+      // B402 is a pump.fun token and may not have Raydium liquidity yet
+      const poolIdEnv = process.env.RAYDIUM_POOL_ID || process.env.RAYDIUM_B402_SOL_POOL_ID
 
-      fastify.log.info({
-        message: 'Raydium pool lookup required',
-        tokenPair: 'SOL-B402',
-        note: 'B402 is a pump.fun token - may not have Raydium liquidity yet'
-      }, '[RAYDIUM] Pool resolution needed')
+      if (!poolIdEnv) {
+        fastify.log.info({
+          message: 'Raydium pool not configured',
+          tokenPair: 'SOL-B402',
+          note: 'B402 is a pump.fun token - may not have Raydium liquidity yet'
+        }, '[RAYDIUM] Pool not available')
 
-      // For now, return an error explaining the situation
-      await markRunFailed(reference)
-      return reply.code(503).send({
-        error: 'Raydium swap not available',
-        details: 'B402 token does not have a Raydium liquidity pool yet. This token uses pump.fun bonding curve.',
-        suggestion: 'Please use pump.fun directly or wait for Raydium migration'
-      })
+        await markRunFailed(reference)
+        return reply.code(503).send({
+          error: 'Raydium swap not available',
+          details: 'B402 token does not have a Raydium liquidity pool yet. This token uses pump.fun bonding curve.',
+          suggestion: 'Please use pump.fun directly or wait for Raydium migration. Set RAYDIUM_POOL_ID environment variable once pool is available.'
+        })
+      }
+
+      const poolId = new PublicKey(poolIdEnv)
 
       // TODO: Implement actual Raydium swap once pool exists
       // The code below is commented out as a template for when pools are available:

@@ -105,7 +105,6 @@ export function HomeSlotMachine() {
         throw new Error('Slot machine data not loaded')
       }
 
-      // @ts-ignore
       const solana = window.solana || window.phantom?.solana
 
       if (!solana || !solana.publicKey) {
@@ -160,7 +159,6 @@ export function HomeSlotMachine() {
 
       const transaction = new VersionedTransaction(messageV0)
 
-      // @ts-ignore
       const signedTx = await solana.signTransaction(transaction)
       const base64Tx = Buffer.from(signedTx.serialize()).toString('base64')
 
@@ -246,7 +244,6 @@ export function HomeSlotMachine() {
     setXPaymentHeader(null)
     setError(null)
 
-    // @ts-ignore
     const solana = window.solana || window.phantom?.solana
 
     if (!solana || !solana.publicKey) {

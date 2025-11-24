@@ -252,7 +252,6 @@ export default function LotteryPage() {
 
     try {
       // Get the actual connected wallet from window.solana
-      // @ts-ignore
       const solana = window.solana || window.phantom?.solana
 
       if (!solana || !solana.publicKey) {

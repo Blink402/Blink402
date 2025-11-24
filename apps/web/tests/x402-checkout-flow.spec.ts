@@ -148,13 +148,9 @@ test.describe('ONCHAIN x402 Checkout Flow', () => {
         feePayer: mockPublicKey
       }
 
-      // @ts-ignore - Mock wallet adapter
       if (typeof window !== 'undefined') {
-        // @ts-ignore
         window.mockWalletConnected = true
-        // @ts-ignore
         window.mockPublicKey = mockPublicKey
-        // @ts-ignore
         window.mockSignTransaction = async (tx: any) => {
           console.log('🖊️  Mock wallet signing transaction')
           return mockTransaction

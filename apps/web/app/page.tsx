@@ -7,6 +7,7 @@ import TrendingBlinks from "@/components/TrendingBlinks"
 import NeonDivider from "@/components/NeonDivider"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { SavingsCalculator } from "@/components/SavingsCalculator"
+import { BurnStats } from "@/components/BurnStats"
 import { BarChart3, Zap, Shield, Bot, Code2, Check, X } from "lucide-react"
 
 // Fetch featured and trending blinks on the server
@@ -58,6 +59,11 @@ export default async function Home() {
 
       {/* B402 Savings Calculator */}
       <SavingsCalculator />
+
+      <NeonDivider className="max-w-6xl mx-auto" />
+
+      {/* B402 Burn Statistics */}
+      <BurnStats />
 
       <NeonDivider className="max-w-6xl mx-auto" />
 

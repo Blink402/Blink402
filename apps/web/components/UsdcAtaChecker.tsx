@@ -74,7 +74,6 @@ export function UsdcAtaChecker({
 
     try {
       // Check for wallet first
-      // @ts-ignore
       const solana = window.solana || window.phantom?.solana
 
       if (!solana) {

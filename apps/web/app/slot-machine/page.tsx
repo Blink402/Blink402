@@ -204,7 +204,6 @@ export default function SlotMachinePage() {
       }
 
       // Get the ACTUAL connected wallet from window.solana (same as checkout page)
-      // @ts-ignore
       const solana = window.solana || window.phantom?.solana
 
       if (!solana || !solana.publicKey) {
@@ -291,7 +290,6 @@ export default function SlotMachinePage() {
       const transaction = new VersionedTransaction(messageV0)
 
       // Sign transaction
-      // @ts-ignore - Privy wallet provider has signTransaction method
       const signedTx = await solana.signTransaction(transaction)
       const base64Tx = Buffer.from(signedTx.serialize()).toString('base64')
 
@@ -417,7 +415,6 @@ export default function SlotMachinePage() {
     // Don't reset gameState to 'idle' - stay in 'paying' to prevent re-render issues
 
     // FIX: Verify wallet is still connected before triggering payment
-    // @ts-ignore
     const solana = window.solana || window.phantom?.solana
 
     if (!solana || !solana.publicKey) {

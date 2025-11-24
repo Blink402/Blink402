@@ -349,7 +349,6 @@ function CreateBlinkPageContent() {
       const { message } = generateAuthMessage(wallet!)
 
       // Use window.solana for signing (same pattern as checkout)
-      // @ts-ignore
       const solana = window.solana || window.phantom?.solana
 
       if (!solana) {

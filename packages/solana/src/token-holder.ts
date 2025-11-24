@@ -9,12 +9,21 @@ import { createLogger } from '@blink402/config'
 const logger = createLogger('@blink402/token-holder')
 
 // B402 token mint address (from pump.fun)
-// TODO: Replace with actual b402 mint address once provided
-// Using a valid Solana address as placeholder (system program)
+// Production: 2mESiwuVdfft9PxG7x36rvDvex6ccyY8m8BKCWJqpump
+// SHOULD be set via B402_MINT_ADDRESS or NEXT_PUBLIC_B402_MINT environment variable
+// Defaults to mainnet address in production, system program in development
 const B402_MINT_ADDRESS =
   process.env.NEXT_PUBLIC_B402_MINT ||
+  process.env.B402_MINT_ADDRESS ||
   process.env.B402_MINT ||
-  '11111111111111111111111111111111' // Valid placeholder (system program)
+  (process.env.NODE_ENV === 'production'
+    ? '2mESiwuVdfft9PxG7x36rvDvex6ccyY8m8BKCWJqpump' // Production mainnet address
+    : '11111111111111111111111111111111') // Development fallback (system program)
+
+// Warn if using placeholder in development
+if (B402_MINT_ADDRESS === '11111111111111111111111111111111') {
+  logger.warn('B402_MINT_ADDRESS not configured - using placeholder. Token holder features will not work. Set B402_MINT_ADDRESS in .env to enable.')
+}
 
 export const B402_MINT = new PublicKey(B402_MINT_ADDRESS)
 

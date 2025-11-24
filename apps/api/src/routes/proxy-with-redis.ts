@@ -18,6 +18,7 @@ import {
   createRewardClaim,
   calculateReferralCommission,
   markCommissionPaid,
+  recordBurn,
 } from '@blink402/database'
 import {
   getConnection,
@@ -31,6 +32,10 @@ import {
   signAndBroadcastReward,
   verifyMessageSignature,
   generateChallengeMessage,
+  burnB402Tokens,
+  isBurnEnabled,
+  getBurnAmount,
+  B402_DECIMALS,
 } from '@blink402/solana'
 import { Keypair } from '@solana/web3.js'
 import {
@@ -771,6 +776,42 @@ export const proxyRoutesWithRedis: FastifyPluginAsync = async (fastify) => {
           const duration = Date.now() - startTime
           await markRunExecuted({ reference, durationMs: duration })
 
+          // ========== B402 AUTO-BURN (DEFLATIONARY TOKENOMICS) ==========
+          // Burn B402 tokens after successful reward claim
+          if (isBurnEnabled()) {
+            try {
+              const burnAmount = getBurnAmount()
+
+              fastify.log.info({
+                reference,
+                burnAmount,
+                blinkSlug: slug
+              }, 'Initiating B402 burn (reward mode)')
+
+              const burnSignature = await burnB402Tokens(burnAmount)
+
+              const burnAmountBaseUnits = BigInt(Math.floor(burnAmount * Math.pow(10, B402_DECIMALS)))
+              await recordBurn({
+                runId: run.id,
+                amountB402: burnAmountBaseUnits,
+                txSignature: burnSignature
+              })
+
+              fastify.log.info({
+                reference,
+                burnAmount,
+                burnSignature,
+                blinkSlug: slug
+              }, 'B402 burn completed successfully (reward mode)')
+            } catch (burnError) {
+              fastify.log.error({
+                error: burnError,
+                reference,
+                blinkSlug: slug
+              }, 'B402 burn failed (reward mode) - continuing without burn')
+            }
+          }
+
           // Return success response
           return reply.code(200).send({
             success: true,
@@ -1361,6 +1402,51 @@ export const proxyRoutesWithRedis: FastifyPluginAsync = async (fastify) => {
               durationMs: duration,
               responseData: responseData // Store the API response for results page
             })
+
+            // ========== B402 AUTO-BURN (DEFLATIONARY TOKENOMICS) ==========
+            // Burn B402 tokens after successful blink execution
+            if (isBurnEnabled()) {
+              try {
+                const burnAmount = getBurnAmount() // Get configured amount (default: 100 B402)
+
+                fastify.log.info({
+                  reference: run.reference,
+                  burnAmount,
+                  blinkSlug: slug
+                }, 'Initiating B402 burn')
+
+                // Burn tokens on Solana
+                const burnSignature = await burnB402Tokens(burnAmount)
+
+                // Record burn in database
+                const burnAmountBaseUnits = BigInt(Math.floor(burnAmount * Math.pow(10, B402_DECIMALS)))
+                await recordBurn({
+                  runId: run.id,
+                  amountB402: burnAmountBaseUnits,
+                  txSignature: burnSignature
+                })
+
+                fastify.log.info({
+                  reference: run.reference,
+                  burnAmount,
+                  burnSignature,
+                  blinkSlug: slug
+                }, 'B402 burn completed successfully')
+              } catch (burnError) {
+                // Log burn errors but don't fail the request
+                // Blink execution was successful, burn failure shouldn't block user
+                fastify.log.error({
+                  error: burnError,
+                  reference: run.reference,
+                  blinkSlug: slug
+                }, 'B402 burn failed - continuing without burn')
+              }
+            } else {
+              fastify.log.debug({
+                reference: run.reference,
+                blinkSlug: slug
+              }, 'B402 burn skipped (disabled via config)')
+            }
 
             // ========== REFERRAL COMMISSION PAYOUT ==========
             // Calculate and pay commission to referrer if payer was referred

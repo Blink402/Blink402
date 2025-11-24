@@ -6,7 +6,7 @@ import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/di
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Gamepad2, Ticket, Zap, Check } from "lucide-react"
+import { Gamepad2, Ticket, Zap, Check, Circle, Award, Medal, Trophy, Gem } from "lucide-react"
 
 interface TierDetailsModalProps {
   currentTier: TokenHolderTier
@@ -18,6 +18,30 @@ interface TierDetailsModalProps {
     progress: number
   } | null
   onClose: () => void
+}
+
+// Helper function to get tier icon component
+const getTierIcon = (tier: TokenHolderTier, className?: string) => {
+  const baseClass = cn(
+    "text-neon-blue-light",
+    "drop-shadow-[0_0_15px_rgba(76,201,240,0.5)]",
+    className
+  )
+
+  switch (tier) {
+    case 'NONE':
+      return <Circle className={baseClass} />
+    case 'BRONZE':
+      return <Award className={baseClass} />
+    case 'SILVER':
+      return <Medal className={baseClass} />
+    case 'GOLD':
+      return <Trophy className={baseClass} />
+    case 'DIAMOND':
+      return <Gem className={baseClass} />
+    default:
+      return <Circle className={baseClass} />
+  }
 }
 
 export default function TierDetailsModal({
@@ -34,7 +58,7 @@ export default function TierDetailsModal({
     <div className="space-y-6">
       <DialogHeader className="space-y-4">
         <DialogTitle className="text-2xl sm:text-3xl font-sans font-light text-neon-white flex items-center gap-3">
-          <span className="text-3xl sm:text-4xl">{getTierDisplayInfo(currentTier).icon}</span>
+          {getTierIcon(currentTier, "w-8 h-8 sm:w-10 sm:h-10")}
           <span>B402 Token Holder Tiers</span>
         </DialogTitle>
         <DialogDescription className="text-neon-grey font-mono text-sm sm:text-base leading-relaxed">
@@ -118,7 +142,6 @@ export default function TierDetailsModal({
                 <tr className="border-b-2 border-neon-blue-light/50">
                   <th className="p-2 sm:p-3 lg:p-4 text-left text-neon-white font-mono text-[10px] sm:text-xs lg:text-sm sticky left-0 bg-neon-black z-10 border-r border-neon-grey/20 min-w-[80px] sm:min-w-[100px]">Benefit</th>
                 {tiers.map((tier) => {
-                  const tierInfo = getTierDisplayInfo(tier)
                   const isCurrentTier = tier === currentTier
                   return (
                     <th
@@ -132,14 +155,8 @@ export default function TierDetailsModal({
                       } : {}}
                     >
                       <div className="flex flex-col items-center gap-1 sm:gap-1.5 lg:gap-2">
-                        <span className="text-xl sm:text-2xl lg:text-3xl">{tierInfo.icon}</span>
-                        <span className={cn(
-                          "text-[10px] sm:text-xs lg:text-sm font-bold",
-                          tier === 'BRONZE' && "text-amber-600",
-                          tier === 'SILVER' && "text-gray-400",
-                          tier === 'GOLD' && "text-yellow-400",
-                          tier === 'DIAMOND' && "text-cyan-400"
-                        )}>
+                        {getTierIcon(tier, "w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7")}
+                        <span className="text-[10px] sm:text-xs lg:text-sm font-bold text-neon-white">
                           {tier}
                         </span>
                         <span className="text-neon-grey text-[8px] sm:text-[10px] lg:text-xs whitespace-nowrap">

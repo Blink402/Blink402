@@ -4,7 +4,7 @@ import { getTierDisplayInfo, type TokenHolderTier } from "@blink402/solana"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Check } from "lucide-react"
+import { Check, Award, Medal, Trophy, Gem } from "lucide-react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 
@@ -17,6 +17,28 @@ interface SavingsCalculatorCardProps {
   isMostPopular?: boolean
   b402PriceUSDC: number
   onBuyClick: () => void
+}
+
+// Helper function to get tier icon component
+const getTierIcon = (tier: TokenHolderTier, className?: string) => {
+  const baseClass = cn(
+    "text-neon-blue-light",
+    "drop-shadow-[0_0_15px_rgba(76,201,240,0.5)]",
+    className
+  )
+
+  switch (tier) {
+    case 'BRONZE':
+      return <Award className={baseClass} />
+    case 'SILVER':
+      return <Medal className={baseClass} />
+    case 'GOLD':
+      return <Trophy className={baseClass} />
+    case 'DIAMOND':
+      return <Gem className={baseClass} />
+    default:
+      return null
+  }
 }
 
 export function SavingsCalculatorCard({
@@ -69,19 +91,13 @@ export function SavingsCalculatorCard({
         "border-2 border-dashed",
         "transition-all duration-300",
         "hover:scale-105",
-        tier === 'BRONZE' && "border-amber-700/60 bg-gradient-to-br from-amber-900/20 to-[--neon-dark]",
-        tier === 'SILVER' && "border-gray-400/60 bg-gradient-to-br from-gray-600/20 to-[--neon-dark]",
-        tier === 'GOLD' && "border-yellow-400/60 bg-gradient-to-br from-yellow-600/20 to-[--neon-dark]",
-        tier === 'DIAMOND' && "border-cyan-400/60 bg-gradient-to-br from-cyan-600/20 to-[--neon-dark]",
+        "border-neon-blue-light/40 bg-gradient-to-br from-neon-blue-dark/10 to-[--neon-dark]",
+        "hover:border-neon-blue-light/60",
         isCurrentTier && "ring-2 ring-green-500 border-green-500",
         isMostPopular && !isCurrentTier && "ring-2 ring-[--neon-blue-light]"
       )}
       style={{
-        boxShadow: `0 0 16px ${tier === 'BRONZE' ? 'rgba(217, 119, 6, 0.3)' :
-            tier === 'SILVER' ? 'rgba(156, 163, 175, 0.3)' :
-              tier === 'GOLD' ? 'rgba(251, 191, 36, 0.3)' :
-                'rgba(34, 211, 238, 0.3)'
-          }`
+        boxShadow: '0 0 16px rgba(90, 180, 255, 0.3)'
       }}
     >
       {/* Badges */}
@@ -100,16 +116,10 @@ export function SavingsCalculatorCard({
 
       {/* Tier Icon & Name */}
       <div className="text-center mb-6">
-        <div className="text-5xl mb-2 animate-pulse" style={{ animationDuration: '2s' }}>
-          {tierDisplay.icon}
+        <div className="flex justify-center mb-2 animate-pulse" style={{ animationDuration: '2s' }}>
+          {getTierIcon(tier, "w-12 h-12")}
         </div>
-        <h3 className={cn(
-          "text-xl font-bold font-mono mb-1",
-          tier === 'BRONZE' && "text-amber-700",
-          tier === 'SILVER' && "text-gray-400",
-          tier === 'GOLD' && "text-yellow-400",
-          tier === 'DIAMOND' && "text-cyan-400"
-        )}>
+        <h3 className="text-xl font-bold font-mono mb-1 text-neon-white">
           {tier}
         </h3>
         <p className="text-[--neon-grey] font-mono text-xs">
@@ -127,26 +137,14 @@ export function SavingsCalculatorCard({
       <div className="space-y-4 mb-6">
         <div>
           <div className="text-[--neon-grey] font-mono text-xs mb-1">Monthly Savings</div>
-          <div className={cn(
-            "text-2xl font-bold font-mono",
-            tier === 'BRONZE' && "text-amber-600",
-            tier === 'SILVER' && "text-gray-300",
-            tier === 'GOLD' && "text-yellow-300",
-            tier === 'DIAMOND' && "text-cyan-300"
-          )}>
+          <div className="text-2xl font-bold font-mono text-neon-blue-light drop-shadow-[0_0_10px_rgba(76,201,240,0.3)]">
             ${displaySavings.toFixed(2)}
           </div>
         </div>
 
         <div>
           <div className="text-[--neon-grey] font-mono text-xs mb-1">ROI Period</div>
-          <div className={cn(
-            "text-xl font-bold font-mono",
-            tier === 'BRONZE' && "text-amber-600",
-            tier === 'SILVER' && "text-gray-300",
-            tier === 'GOLD' && "text-yellow-300",
-            tier === 'DIAMOND' && "text-cyan-300"
-          )}>
+          <div className="text-xl font-bold font-mono text-neon-blue-light drop-shadow-[0_0_10px_rgba(76,201,240,0.3)]">
             {displayROI.toFixed(0)} weeks
           </div>
         </div>
@@ -171,13 +169,10 @@ export function SavingsCalculatorCard({
         >
           <Button
             onClick={onBuyClick}
-            className={cn(
-              "w-full font-mono font-bold transition-all duration-200",
-              tier === 'BRONZE' && "bg-amber-700 hover:bg-amber-600 text-white",
-              tier === 'SILVER' && "bg-gray-500 hover:bg-gray-400 text-white",
-              tier === 'GOLD' && "bg-yellow-600 hover:bg-yellow-500 text-black",
-              tier === 'DIAMOND' && "bg-cyan-500 hover:bg-cyan-400 text-black"
-            )}
+            className="w-full font-mono font-bold transition-all duration-200 bg-neon-blue-dark hover:bg-neon-blue-light text-white border-2 border-dashed border-neon-blue-light/50"
+            style={{
+              boxShadow: '0 0 12px rgba(90, 180, 255, 0.3)'
+            }}
           >
             Buy Now
           </Button>
@@ -188,11 +183,7 @@ export function SavingsCalculatorCard({
       <div
         className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"
         style={{
-          background: `radial-gradient(circle at center, ${tier === 'BRONZE' ? 'rgba(217, 119, 6, 0.5)' :
-              tier === 'SILVER' ? 'rgba(156, 163, 175, 0.5)' :
-                tier === 'GOLD' ? 'rgba(251, 191, 36, 0.5)' :
-                  'rgba(34, 211, 238, 0.5)'
-            }, transparent)`
+          background: 'radial-gradient(circle at center, rgba(90, 180, 255, 0.5), transparent)'
         }}
       />
     </div>

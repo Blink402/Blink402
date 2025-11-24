@@ -6,7 +6,7 @@ import { getB402HolderTier, getTierDisplayInfo, getTierThresholds, type TokenHol
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import TierDetailsModal from "./TierDetailsModal"
-import { Circle, Award, Medal, Gem, Info } from "lucide-react"
+import { Circle, Award, Medal, Trophy, Gem, Info } from "lucide-react"
 
 interface TierBadgeWidgetProps {
   variant?: 'desktop' | 'mobile'
@@ -14,17 +14,23 @@ interface TierBadgeWidgetProps {
 }
 
 const TierIcon = ({ tier, className }: { tier: TokenHolderTier, className?: string }) => {
+  const baseClass = cn(
+    "text-neon-blue-light",
+    "drop-shadow-[0_0_15px_rgba(76,201,240,0.5)]",
+    className
+  )
+
   switch (tier) {
     case 'BRONZE':
-      return <Award className={cn("text-amber-700", className)} />;
+      return <Award className={baseClass} />;
     case 'SILVER':
-      return <Medal className={cn("text-gray-400", className)} />;
+      return <Medal className={baseClass} />;
     case 'GOLD':
-      return <Medal className={cn("text-yellow-400", className)} />;
+      return <Trophy className={baseClass} />;
     case 'DIAMOND':
-      return <Gem className={cn("text-cyan-400", className)} />;
+      return <Gem className={baseClass} />;
     default:
-      return <Circle className={cn("text-gray-500", className)} />;
+      return <Circle className={baseClass} />;
   }
 }
 

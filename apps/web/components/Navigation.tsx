@@ -113,8 +113,8 @@ export function Navigation() {
           hidden md:flex items-center justify-between px-6 h-16
           border-b transition-all duration-300
           ${isScrolled
-            ? 'border-neon-grey/30 bg-neon-black/80 backdrop-blur-md shadow-lg'
-            : 'border-neon-grey/10 bg-neon-black/20 backdrop-blur-sm'
+            ? 'border-neon-grey/30 bg-neon-dark/90 backdrop-blur-md shadow-lg'
+            : 'border-neon-grey/10 bg-neon-black/40 backdrop-blur-sm'
           }
         `}
       >
@@ -235,8 +235,8 @@ export function Navigation() {
           sticky top-0 z-50
           md:hidden border-b transition-all duration-300
           ${isScrolled
-            ? 'border-neon-grey/30 bg-neon-black/80 backdrop-blur-lg shadow-lg'
-            : 'border-neon-grey/20 bg-neon-black/40 backdrop-blur-sm'
+            ? 'border-neon-grey/30 bg-neon-dark/90 backdrop-blur-lg shadow-lg'
+            : 'border-neon-grey/20 bg-neon-black/60 backdrop-blur-sm'
           }
         `}
       >
@@ -294,7 +294,7 @@ export function Navigation() {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-[10000] bg-neon-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[10000] bg-neon-black/85 backdrop-blur-sm"
             onClick={() => setMobileMenuOpen(false)}
             aria-hidden="true"
           />
@@ -303,7 +303,7 @@ export function Navigation() {
           <div
             ref={menuRef}
             id="mobile-menu"
-            className="fixed inset-0 z-[10001] flex flex-col items-center justify-center bg-neon-black/95"
+            className="fixed inset-0 z-[10001] flex flex-col items-center justify-center bg-neon-dark/98 backdrop-blur-md"
             role="dialog"
             aria-modal="true"
             aria-label="Mobile navigation menu"

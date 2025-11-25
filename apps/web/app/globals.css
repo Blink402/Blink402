@@ -5,14 +5,15 @@
 
 /* Single consolidated :root block with all variables */
 :root {
-  /* Blink402 neon palette - Enhanced for vibrancy */
-  --neon-black: #050505;
-  /* Deepest black */
-  --neon-dark: #0a0a0a;
-  /* Standard background */
-  --neon-surface: #121212;
-  /* Card background */
-  --neon-grey: #a0a0a0;
+  /* Blink402 neon palette - Optimized for readability */
+  --neon-black: #1a1a1c;
+  /* Main background - warmer dark with slight blue tint */
+  --neon-dark: #222226;
+  /* Secondary background - visible depth */
+  --neon-surface: #2a2a30;
+  /* Card background - clear separation */
+  --neon-grey: #d0d0d8;
+  /* Much lighter grey for excellent contrast */
   --neon-white: #ffffff;
 
   /* Electric Blue Palette - More vibrant */
@@ -57,15 +58,15 @@
   --primary-foreground: var(--neon-black);
   --secondary: var(--neon-surface);
   --secondary-foreground: var(--neon-white);
-  --muted: #1a1a1a;
-  --muted-foreground: var(--neon-grey);
+  --muted: #2e2e34;
+  --muted-foreground: #d4d4dc;
   --accent: var(--neon-blue-primary);
   --accent-foreground: var(--neon-white);
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: rgba(76, 201, 240, 0.15);
-  --input: rgba(76, 201, 240, 0.15);
-  --ring: rgba(76, 201, 240, 0.7);
+  --border: rgba(76, 201, 240, 0.2);
+  --input: rgba(76, 201, 240, 0.2);
+  --ring: rgba(76, 201, 240, 0.8);
   --radius: 0.75rem;
 
   /* Chart colors */
@@ -162,7 +163,9 @@
   body {
     height: 100%;
     overflow-x: hidden;
-    background: var(--neon-black);
+    background: radial-gradient(ellipse at top, rgba(67, 97, 238, 0.08) 0%, var(--neon-black) 50%),
+                radial-gradient(ellipse at bottom, rgba(114, 9, 183, 0.06) 0%, var(--neon-black) 50%),
+                var(--neon-black);
     color: var(--neon-white);
     /* Support iOS safe area insets */
     padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
@@ -181,7 +184,7 @@
     inset: 0;
     pointer-events: none;
     z-index: 9998;
-    opacity: 0.05;
+    opacity: 0.03;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-size: 150px 150px;
@@ -252,19 +255,19 @@
     scroll-behavior: smooth;
   }
 
-  /* Standard section padding */
+  /* Standard section padding - increased for better breathing room */
   .section-padding {
-    @apply py-16 md:py-24;
+    @apply py-20 md:py-32;
   }
 
-  /* Hover lift effect */
+  /* Hover lift effect - enhanced */
   .hover-lift {
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(90, 180, 255, 0.15);
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 12px 32px rgba(90, 180, 255, 0.2), 0 4px 12px rgba(114, 9, 183, 0.1);
   }
 
   /* Neon gradient text */
@@ -286,7 +289,7 @@
 
   /* Desaturated sub-labels for better hierarchy */
   .text-muted-subtle {
-    opacity: 0.7;
+    opacity: 0.85;
     color: var(--neon-grey);
   }
 
@@ -372,8 +375,9 @@
     position: sticky;
     top: 0;
     z-index: 50;
-    background: var(--neon-black);
-    backdrop-filter: blur(8px);
+    background: rgba(26, 26, 28, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   /* Logo neon glow effect - reduced intensity */
@@ -494,7 +498,7 @@
   inset: 0;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.1;
+  opacity: 0.03;
   width: 100%;
   height: 100%;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
@@ -784,27 +788,29 @@ dotlottie-player svg path[fill="#fff"] {
     animation: gradient 3s ease infinite;
   }
 
-  /* Glassmorphism Utilities */
+  /* Glassmorphism Utilities - Lighter and more visible */
   .glass-panel {
-    background: rgba(10, 10, 10, 0.7);
+    background: rgba(42, 42, 48, 0.8);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
   }
 
   .glass-card {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+    background: linear-gradient(145deg, rgba(42, 42, 48, 0.9) 0%, rgba(34, 34, 38, 0.85) 100%);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .glass-card:hover {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-    border-color: rgba(76, 201, 240, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 15px rgba(76, 201, 240, 0.1);
+    background: linear-gradient(145deg, rgba(76, 201, 240, 0.12) 0%, rgba(114, 9, 183, 0.08) 100%);
+    border-color: rgba(76, 201, 240, 0.4);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6), 0 0 24px rgba(76, 201, 240, 0.2), 0 0 12px rgba(114, 9, 183, 0.15);
+    transform: translateY(-2px);
   }
 
   /* Neon Text Effects */
@@ -1062,11 +1068,11 @@ dotlottie-player svg path[fill="#fff"] {
 /* Privy CSS Variables - Official API for theming */
 :root {
   /* Privy color system */
-  --privy-color-background: #1e1e1e;
+  --privy-color-background: #2a2a30;
   --privy-color-foreground: #ffffff;
-  --privy-color-foreground-2: #9d9d9d;
-  --privy-color-foreground-3: #666666;
-  --privy-color-foreground-4: #333333;
+  --privy-color-foreground-2: #d0d0d8;
+  --privy-color-foreground-3: #a0a0a8;
+  --privy-color-foreground-4: #606068;
   --privy-color-accent: #5AB4FF;
   --privy-color-accent-light: #7AC3FF;
   --privy-color-success: #5AB4FF;

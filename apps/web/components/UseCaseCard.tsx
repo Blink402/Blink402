@@ -35,30 +35,31 @@ export const UseCaseCard = React.memo(function UseCaseCard({
     <div
       className={cn(
         "group relative",
-        "p-6 rounded-lg",
+        "p-8 rounded-xl",
         "glass-card",
         "transition-all duration-300",
         "hover:scale-[1.02]",
+        "hover-lift",
         className
       )}
       data-reveal
     >
-      {/* Category Badge */}
-      <div className="absolute top-3 right-3">
+      {/* Category Badge - larger and more prominent */}
+      <div className="absolute top-4 right-4">
         <Badge
           variant="outline"
-          className="bg-neon-blue-primary/10 text-neon-blue-light border-neon-blue-light/30 text-[10px] px-2 py-0"
+          className="bg-gradient-to-r from-neon-blue-primary/20 to-neon-purple/20 text-neon-blue-light border-neon-blue-light/40 text-xs px-3 py-1 font-bold tracking-wider"
         >
           {category.toUpperCase()}
         </Badge>
       </div>
 
       {/* Icon & Title */}
-      <div className="mb-4">
-        <div className="text-neon-blue-light mb-3 group-hover:scale-110 transition-transform duration-300 group-hover:text-neon-cyan">
+      <div className="mb-6">
+        <div className="text-neon-blue-light mb-4 group-hover:scale-110 transition-transform duration-300 group-hover:text-neon-cyan">
           {icon}
         </div>
-        <h3 className="text-2xl font-sans font-light text-neon-white mb-2 group-hover:text-neon-blue-light transition-colors">
+        <h3 className="text-2xl font-sans font-light text-neon-white mb-3 group-hover:text-neon-blue-light transition-colors">
           {title}
         </h3>
         <p className="text-neon-grey font-mono text-sm leading-relaxed">
@@ -67,35 +68,35 @@ export const UseCaseCard = React.memo(function UseCaseCard({
       </div>
 
       {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-neon-grey/20 to-transparent mb-4" />
+      <div className="h-px bg-gradient-to-r from-transparent via-neon-blue-light/30 to-transparent mb-6" />
 
       {/* Example APIs */}
-      <div className="space-y-3 mb-6">
-        <div className="text-neon-blue-light font-mono text-xs font-bold uppercase tracking-wider opacity-80">
+      <div className="space-y-3 mb-8">
+        <div className="text-neon-blue-light font-mono text-xs font-bold uppercase tracking-wider mb-4">
           Example Use Cases
         </div>
         {examples.map((example, idx) => (
           <div
             key={idx}
-            className="p-3 rounded border border-dashed border-neon-grey/20 bg-neon-black/40 hover:border-neon-blue-light/40 transition-colors hover:bg-neon-blue-primary/5"
+            className="p-4 rounded-lg border border-dashed border-neon-grey/20 bg-neon-dark/60 hover:border-neon-blue-light/50 transition-all duration-200 hover:bg-gradient-to-br hover:from-neon-blue-primary/10 hover:to-neon-purple/5"
           >
             <div className="flex items-start justify-between mb-1">
               <div className="flex-1">
                 <div className="text-neon-white font-mono text-sm font-medium">
                   {example.name}
                 </div>
-                <div className="text-neon-grey font-mono text-xs mt-1">
+                <div className="text-neon-grey font-mono text-xs mt-1.5">
                   {example.description}
                 </div>
               </div>
-              <div className="ml-3 text-neon-blue-light font-mono text-xs font-bold whitespace-nowrap">
+              <div className="ml-4 text-neon-cyan font-mono text-sm font-bold whitespace-nowrap">
                 {example.price}
               </div>
             </div>
             {example.demoSlug && (
               <Link
                 href={`/blink/${example.demoSlug}`}
-                className="inline-flex items-center gap-1 text-neon-cyan font-mono text-[10px] hover:underline mt-2"
+                className="inline-flex items-center gap-1 text-neon-pink font-mono text-xs hover:text-neon-blue-light hover:underline mt-3 transition-colors"
               >
                 Try Live Demo →
               </Link>

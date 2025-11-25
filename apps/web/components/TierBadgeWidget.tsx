@@ -138,23 +138,22 @@ export function TierBadgeWidget({ variant = 'desktop', className }: TierBadgeWid
         <button
           className={cn(
             "relative group",
-            "flex items-center gap-2 px-3 py-2 rounded-lg",
-            "border-2 border-dashed border-[--neon-blue-light]/60",
-            "bg-[--neon-dark] hover:bg-[--neon-black]",
+            variant === 'desktop' && "flex items-center gap-2 h-10 px-3 py-2 rounded-lg",
+            variant === 'mobile' && "flex items-center gap-2 px-3 py-2 rounded-lg w-full justify-between",
+            "border border-dashed border-[--neon-blue-light]/50",
+            "bg-[--neon-surface]/80 hover:bg-[--neon-surface]",
+            "backdrop-blur-sm",
             "transition-all duration-200",
             "hover:border-[--neon-blue-light]",
-            "hover:scale-105",
-            variant === 'mobile' && "w-full justify-between",
+            "hover:shadow-[0_0_16px_rgba(76,201,240,0.3)]",
+            "hover:scale-[1.02]",
             className
           )}
-          style={{
-            boxShadow: "0 0 12px rgba(90, 180, 255, 0.3)",
-          }}
           disabled={isLoading}
         >
           {isLoading ? (
             <>
-              <div className="w-6 h-6 rounded-full bg-[--neon-grey]/20 animate-pulse" />
+              <div className="w-5 h-5 rounded-full bg-[--neon-grey]/20 animate-pulse" />
               <div className="flex flex-col items-start gap-1">
                 <div className="w-16 h-3 bg-[--neon-grey]/20 rounded animate-pulse" />
                 <div className="w-12 h-2 bg-[--neon-grey]/20 rounded animate-pulse" />
@@ -163,20 +162,23 @@ export function TierBadgeWidget({ variant = 'desktop', className }: TierBadgeWid
           ) : (
             <>
               {/* Tier Icon */}
-              <span className="animate-pulse" style={{ animationDuration: '2s' }}>
-                <TierIcon tier={tier} className="w-6 h-6" />
+              <span className="flex-shrink-0 animate-pulse" style={{ animationDuration: '2s' }}>
+                <TierIcon tier={tier} className={cn(
+                  variant === 'desktop' && "w-5 h-5",
+                  variant === 'mobile' && "w-6 h-6"
+                )} />
               </span>
 
               {/* Balance & Tier Info */}
-              <div className="flex flex-col items-start">
-                <span className="text-[--neon-white] font-mono text-xs font-bold">
+              <div className="flex flex-col items-start flex-1 min-w-0">
+                <span className="text-[--neon-white] font-mono text-xs font-bold truncate">
                   {formatBalance(balance)} B402
                 </span>
                 <span className={cn(
-                  "font-mono text-[10px]",
+                  "font-mono text-[10px] truncate",
                   tier === 'NONE' && "text-[--neon-grey]",
-                  tier === 'BRONZE' && "text-amber-700",
-                  tier === 'SILVER' && "text-gray-400",
+                  tier === 'BRONZE' && "text-amber-500",
+                  tier === 'SILVER' && "text-slate-400",
                   tier === 'GOLD' && "text-yellow-400",
                   tier === 'DIAMOND' && "text-cyan-400"
                 )}>
@@ -184,23 +186,22 @@ export function TierBadgeWidget({ variant = 'desktop', className }: TierBadgeWid
                 </span>
               </div>
 
-              {/* Tooltip Indicator (chevron or info icon) */}
-              {variant === 'desktop' && (
-                <Info className="w-3 h-3 text-[--neon-grey] group-hover:text-[--neon-blue-light] transition-colors" />
-              )}
+              {/* Info icon - subtle indicator this is clickable */}
+              <Info className="w-3.5 h-3.5 text-[--neon-grey] group-hover:text-[--neon-blue-light] transition-colors flex-shrink-0" />
             </>
           )}
 
           {/* Gradient overlay on hover */}
           <div
-            className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity pointer-events-none"
+            className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-200 pointer-events-none"
             style={{
-              background: `linear-gradient(135deg, ${tier === 'BRONZE' ? 'rgba(217, 119, 6, 0.3)' :
-                  tier === 'SILVER' ? 'rgba(156, 163, 175, 0.3)' :
-                    tier === 'GOLD' ? 'rgba(251, 191, 36, 0.3)' :
-                      tier === 'DIAMOND' ? 'rgba(34, 211, 238, 0.3)' :
-                        'rgba(90, 180, 255, 0.3)'
-                }, transparent)`
+              background: `linear-gradient(135deg, ${
+                tier === 'BRONZE' ? 'rgba(217, 119, 6, 0.5)' :
+                tier === 'SILVER' ? 'rgba(148, 163, 184, 0.5)' :
+                tier === 'GOLD' ? 'rgba(251, 191, 36, 0.5)' :
+                tier === 'DIAMOND' ? 'rgba(34, 211, 238, 0.5)' :
+                'rgba(90, 180, 255, 0.5)'
+              }, transparent)`
             }}
           />
         </button>

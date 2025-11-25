@@ -220,20 +220,20 @@ export default function UseCasesPage() {
       <div className="noise-overlay" />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-16 px-4">
+      <section className="relative pt-36 pb-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-block mb-4 text-neon-blue-light animate-float" data-reveal>
-            <Zap className="w-16 h-16 mx-auto drop-shadow-[0_0_15px_rgba(76,201,240,0.5)]" />
+          <div className="inline-block mb-6 text-neon-blue-light animate-float" data-reveal>
+            <Zap className="w-20 h-20 mx-auto drop-shadow-[0_0_20px_rgba(76,201,240,0.6)]" />
           </div>
           <h1
-            className="text-5xl sm:text-6xl md:text-7xl font-sans font-light text-neon-white mb-6 tracking-tight"
+            className="text-6xl sm:text-7xl md:text-8xl font-sans font-light text-neon-white mb-8 tracking-tight"
             data-reveal
             data-scramble
           >
-            Use <span className="text-neon-blue-light">Cases</span>
+            Use <span className="text-gradient-animated">Cases</span>
           </h1>
           <p
-            className="text-xl sm:text-2xl text-neon-grey font-mono max-w-3xl mx-auto leading-relaxed"
+            className="text-xl sm:text-2xl text-neon-grey font-mono max-w-4xl mx-auto leading-relaxed"
             data-reveal
           >
             Turn any API into a monetizable Blink. From AI models to data feeds,
@@ -242,29 +242,29 @@ export default function UseCasesPage() {
           </p>
         </div>
 
-        {/* Stats Banner */}
-        <div className="max-w-5xl mx-auto mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6" data-reveal>
-          <div className="text-center p-6 glass-panel rounded-lg hover:border-neon-blue-light/30 transition-colors">
-            <div className="text-4xl font-bold font-mono text-neon-blue-light drop-shadow-[0_0_10px_rgba(76,201,240,0.3)]">7</div>
-            <div className="text-sm font-mono text-neon-grey mt-1">Categories</div>
+        {/* Stats Banner - improved */}
+        <div className="max-w-5xl mx-auto mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6" data-reveal>
+          <div className="text-center p-8 glass-card rounded-xl hover:border-neon-blue-light/50 transition-all hover-lift">
+            <div className="text-5xl font-bold font-mono text-neon-blue-light drop-shadow-[0_0_15px_rgba(76,201,240,0.4)] mb-2">7</div>
+            <div className="text-base font-mono text-neon-grey">Categories</div>
           </div>
-          <div className="text-center p-6 glass-panel rounded-lg hover:border-neon-blue-light/30 transition-colors">
-            <div className="text-4xl font-bold font-mono text-neon-blue-light drop-shadow-[0_0_10px_rgba(76,201,240,0.3)]">28+</div>
-            <div className="text-sm font-mono text-neon-grey mt-1">Example APIs</div>
+          <div className="text-center p-8 glass-card rounded-xl hover:border-neon-purple/50 transition-all hover-lift">
+            <div className="text-5xl font-bold font-mono text-neon-purple drop-shadow-[0_0_15px_rgba(114,9,183,0.4)] mb-2">28+</div>
+            <div className="text-base font-mono text-neon-grey">Example APIs</div>
           </div>
-          <div className="text-center p-6 glass-panel rounded-lg hover:border-neon-blue-light/30 transition-colors">
-            <div className="text-4xl font-bold font-mono text-neon-blue-light drop-shadow-[0_0_10px_rgba(76,201,240,0.3)]">$0.05</div>
-            <div className="text-sm font-mono text-neon-grey mt-1">Starting Price</div>
+          <div className="text-center p-8 glass-card rounded-xl hover:border-neon-cyan/50 transition-all hover-lift">
+            <div className="text-5xl font-bold font-mono text-neon-cyan drop-shadow-[0_0_15px_rgba(0,245,212,0.4)] mb-2">$0.05</div>
+            <div className="text-base font-mono text-neon-grey">Starting Price</div>
           </div>
         </div>
       </section>
 
-      <NeonDivider className="max-w-6xl mx-auto mb-16 opacity-50" />
+      <NeonDivider className="max-w-6xl mx-auto mb-20 opacity-50" />
 
       {/* Use Cases Grid */}
-      <section className="pb-20 px-4">
+      <section className="pb-24 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {useCases.map((useCase, idx) => (
               <UseCaseCard
                 key={idx}
@@ -280,7 +280,7 @@ export default function UseCasesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="pb-20 px-4">
+      <section className="pb-24 px-4">
         <div className="max-w-4xl mx-auto text-center" data-reveal>
           <div className="p-8 sm:p-12 rounded-lg glass-card border border-neon-blue-light/20 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-br from-neon-blue-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

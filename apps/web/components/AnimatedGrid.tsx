@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 
 interface AnimatedGridProps {
   className?: string
+  color?: string // Hex color or rgba string
 }
 
 /**
@@ -11,7 +12,7 @@ interface AnimatedGridProps {
  * Creates a cyberpunk/terminal aesthetic
  * Performance optimized: 30fps, pauses when hidden, disabled on mobile
  */
-export function AnimatedGrid({ className = '' }: AnimatedGridProps) {
+export function AnimatedGrid({ className = '', color = '90, 180, 255' }: AnimatedGridProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -71,6 +72,11 @@ export function AnimatedGrid({ className = '' }: AnimatedGridProps) {
     }
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
+    // Parse color if it's a hex string, otherwise assume it's an RGB triplet string
+    const rgbColor = color.startsWith('#')
+      ? hexToRgb(color)
+      : color
+
     // Animation loop with FPS throttling
     const animate = (currentTime: number) => {
       if (!ctx || !canvas || !isVisible) return
@@ -91,7 +97,7 @@ export function AnimatedGrid({ className = '' }: AnimatedGridProps) {
       offsetY += 0.1
 
       // Draw vertical lines
-      ctx.strokeStyle = 'rgba(90, 180, 255, 0.08)'
+      ctx.strokeStyle = `rgba(${rgbColor}, 0.08)`
       ctx.lineWidth = 1
       for (let x = (offsetX % gridSize) - gridSize; x < canvas.width; x += gridSize) {
         ctx.beginPath()
@@ -109,7 +115,7 @@ export function AnimatedGrid({ className = '' }: AnimatedGridProps) {
       }
 
       // Draw intersection dots
-      ctx.fillStyle = 'rgba(90, 180, 255, 0.15)'
+      ctx.fillStyle = `rgba(${rgbColor}, 0.15)`
       for (let x = (offsetX % gridSize) - gridSize; x < canvas.width; x += gridSize) {
         for (let y = (offsetY % gridSize) - gridSize; y < canvas.height; y += gridSize) {
           ctx.beginPath()
@@ -129,7 +135,7 @@ export function AnimatedGrid({ className = '' }: AnimatedGridProps) {
       cancelAnimationFrame(animationId)
       clearTimeout(resizeTimeout)
     }
-  }, [isMobile])
+  }, [isMobile, color])
 
   return (
     <canvas
@@ -144,4 +150,12 @@ export function AnimatedGrid({ className = '' }: AnimatedGridProps) {
       aria-hidden="true"
     />
   )
+}
+
+// Helper to convert hex to rgb string "r, g, b"
+function hexToRgb(hex: string): string {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result
+    ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+    : '90, 180, 255'
 }

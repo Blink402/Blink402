@@ -164,8 +164,8 @@
     height: 100%;
     overflow-x: hidden;
     background: radial-gradient(ellipse at top, rgba(67, 97, 238, 0.08) 0%, var(--neon-black) 50%),
-                radial-gradient(ellipse at bottom, rgba(114, 9, 183, 0.06) 0%, var(--neon-black) 50%),
-                var(--neon-black);
+      radial-gradient(ellipse at bottom, rgba(114, 9, 183, 0.06) 0%, var(--neon-black) 50%),
+      var(--neon-black);
     color: var(--neon-white);
     /* Support iOS safe area insets */
     padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
@@ -551,6 +551,20 @@ dotlottie-player svg path[fill="#fff"] {
     brightness(1.4) contrast(1.5) saturate(1.8) hue-rotate(200deg) drop-shadow(0 0 12px rgba(90, 180, 255, 0.8)) drop-shadow(0 0 24px rgba(90, 180, 255, 0.5)) drop-shadow(0 0 40px rgba(59, 143, 217, 0.3));
   transform: translateZ(0);
   will-change: transform;
+}
+
+/* Force remove white fills for specific Lottie animations */
+.lottie-no-fill svg path[fill="white"],
+.lottie-no-fill svg path[fill="#ffffff"],
+.lottie-no-fill svg path[fill="#fff"],
+.lottie-no-fill svg rect[fill="white"],
+.lottie-no-fill svg rect[fill="#ffffff"],
+.lottie-no-fill svg rect[fill="#fff"],
+.lottie-no-fill svg polygon[fill="white"],
+.lottie-no-fill svg polygon[fill="#ffffff"],
+.lottie-no-fill svg polygon[fill="#fff"] {
+  fill: transparent !important;
+  opacity: 0 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

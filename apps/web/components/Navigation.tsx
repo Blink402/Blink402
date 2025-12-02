@@ -100,6 +100,7 @@ export function Navigation() {
     { href: '/use-cases', label: 'Use Cases' },
     { href: '/dashboard', label: 'My Blinks' },
     { href: '/docs', label: 'Docs' },
+    { href: '/f402', label: 'F402' },
   ]
 
   const isActive = (href: string) => pathname === href

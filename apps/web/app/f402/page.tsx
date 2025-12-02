@@ -89,7 +89,7 @@ export default function F402Page() {
                                 className="bg-[#26c56a] hover:bg-[#26c56a]/90 text-black font-bold text-lg px-8 h-14 rounded-full w-full sm:w-auto"
                                 asChild
                             >
-                                <Link href="https://pump.fun" target="_blank">
+                                <Link href="https://pump.fun/profile/6BMqMyEQpyABpjZHXxKpojuYoqYn9jMD3wnwZ4rANotB?tab=coins" target="_blank">
                                     View Token on Pump.fun
                                     <ExternalLink className="ml-2 h-5 w-5" />
                                 </Link>
@@ -496,7 +496,7 @@ export default function F402Page() {
                             className="border-gray-700 hover:bg-gray-800 text-white h-14 px-8 rounded-full w-full sm:w-auto"
                             asChild
                         >
-                            <Link href="https://dexscreener.com" target="_blank">
+                            <Link href="https://dexscreener.com/solana/6BMqMyEQpyABpjZHXxKpojuYoqYn9jMD3wnwZ4rANotB" target="_blank">
                                 View on DexScreener
                             </Link>
                         </Button>

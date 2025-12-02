@@ -7,9 +7,9 @@
 
 import { Connection, PublicKey } from '@solana/web3.js'
 import { getConnection, verifyPayment, extractPayerWithRetry, getUsdcMint } from '@blink402/solana'
-import { getLogger } from '@blink402/config'
+import { createLogger } from '@blink402/config'
 
-const logger = getLogger()
+const logger = createLogger('payment:solana-pay')
 
 /**
  * Solana Pay verification result
@@ -129,8 +129,9 @@ export async function verifySolanaPayPaymentWithRetry(
       return await verifySolanaPayPayment(params)
     } catch (error) {
       lastError = error as Error
-      logger.warn(`Solana Pay verification failed (attempt ${attempt}/${maxRetries})`, error as Error, {
-        reference: params.reference
+      logger.warn(`Solana Pay verification failed (attempt ${attempt}/${maxRetries})`, {
+        reference: params.reference,
+        error: error instanceof Error ? error.message : String(error)
       })
 
       if (attempt < maxRetries) {

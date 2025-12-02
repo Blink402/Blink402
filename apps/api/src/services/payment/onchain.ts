@@ -6,9 +6,9 @@
  * the payment, so we just trust the txHash they provide.
  */
 
-import { getLogger } from '@blink402/config'
+import { createLogger } from '@blink402/config'
 
-const logger = getLogger()
+const logger = createLogger('payment:onchain')
 
 /**
  * ONCHAIN Connect verification result

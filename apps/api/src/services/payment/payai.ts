@@ -7,9 +7,9 @@
 
 import { X402PaymentHandler } from 'x402-solana/server'
 import { VersionedTransaction } from '@solana/web3.js'
-import { getLogger } from '@blink402/config'
+import { createLogger } from '@blink402/config'
 
-const logger = getLogger()
+const logger = createLogger('payment:payai')
 
 /**
  * PayAI payment verification result
@@ -93,7 +93,9 @@ export function extractPayerFromX402(paymentHeader: string): string {
     logger.info('Extracted actual user wallet from transfer instruction', { payer, authorityIndex })
     return payer
   } catch (error) {
-    logger.warn('Could not extract payer from payment header', error as Error)
+    logger.warn('Could not extract payer from payment header', {
+      error: error instanceof Error ? error.message : String(error)
+    })
     return ''
   }
 }
@@ -123,9 +125,38 @@ export function extractSignatureFromX402(paymentHeader: string, reference: strin
     // For now, use reference as placeholder until we get on-chain confirmation
     return reference
   } catch (error) {
-    logger.warn('Could not extract transaction from payment header', error as Error)
+    logger.warn('Could not extract transaction from payment header', {
+      error: error instanceof Error ? error.message : String(error)
+    })
     return reference
   }
+}
+
+/**
+ * Create PayAI payment requirements from our internal format
+ *
+ * @param handler - Initialized PayAI handler
+ * @param requirements - Our internal payment requirements
+ * @returns PayAI SDK payment requirements
+ */
+async function createSDKPaymentRequirements(
+  handler: X402PaymentHandler,
+  requirements: PaymentRequirements
+) {
+  return await handler.createPaymentRequirements({
+    price: {
+      amount: String(requirements.price.amount), // Convert number to string
+      asset: {
+        address: requirements.price.asset.address,
+        decimals: requirements.price.asset.decimals
+      }
+    },
+    network: requirements.network,
+    config: {
+      description: requirements.config.description,
+      resource: requirements.config.resource as `${string}://${string}` // Type assertion for URL format
+    }
+  })
 }
 
 /**
@@ -147,8 +178,11 @@ export async function verifyPayAIPayment(
     network: requirements.network
   })
 
+  // Convert to SDK format
+  const sdkRequirements = await createSDKPaymentRequirements(handler, requirements)
+
   // NOTE: PayAI SDK returns boolean, not object
-  const isVerified = await handler.verifyPayment(paymentHeader, requirements)
+  const isVerified = await handler.verifyPayment(paymentHeader, sdkRequirements)
 
   if (!isVerified) {
     throw new Error('PayAI payment verification failed - invalid payment')
@@ -175,7 +209,10 @@ export async function settlePayAIPayment(
 ): Promise<void> {
   logger.info('Settling payment with PayAI facilitator')
 
-  await handler.settlePayment(paymentHeader, requirements)
+  // Convert to SDK format
+  const sdkRequirements = await createSDKPaymentRequirements(handler, requirements)
+
+  await handler.settlePayment(paymentHeader, sdkRequirements)
 
   logger.info('PayAI payment settlement successful')
 }

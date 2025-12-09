@@ -98,6 +98,7 @@ export function Navigation() {
   const links = [
     { href: '/catalog', label: 'Catalog' },
     { href: '/use-cases', label: 'Use Cases' },
+    { href: '/launch', label: 'Launch' },
     { href: '/dashboard', label: 'My Blinks' },
     { href: '/docs', label: 'Docs' },
     { href: '/f402', label: 'F402' },

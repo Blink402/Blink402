@@ -80,7 +80,8 @@ import { initRedis, isRedisConnected, getRedis } from '@blink402/redis'
 
 // Import routes
 import { actionsMetadataRoutes } from './routes/actions-metadata.js'
-import { proxyRoutes } from './routes/proxy.js'
+// Temporarily disabled due to missing @blink402/onchain package
+// import { proxyRoutes } from './routes/proxy.js'
 import { proxyRoutesWithRedis } from './routes/proxy-with-redis.js'
 import { blinksRoutes } from './routes/blinks.js'
 import { catalogRoutes } from './routes/catalog.js'
@@ -93,10 +94,12 @@ import { demoRoutes } from './routes/demo.js'
 import { adminRoutes } from './routes/admin.js'
 import { galleryRoutes } from './routes/gallery.js'
 import { profilesRoutes } from './routes/profiles.js'
-import { walletAnalysisRoutes } from './routes/wallet-analysis.js'
+// Temporarily disabled due to missing @blink402/helius package
+// import { walletAnalysisRoutes } from './routes/wallet-analysis.js'
 import { tokenPriceRoutes } from './routes/token-price.js'
 import { qrCodeRoutes } from './routes/qr-code.js'
-import { aiServicesRoutes } from './routes/ai-services.js'
+// Temporarily disabled due to missing @blink402/helius package
+// import { aiServicesRoutes } from './routes/ai-services.js'
 import { aiRoutes } from './routes/ai.js'
 import { socialViewRoutes } from './routes/social-view.js'
 import { thankYouClaimRoutes } from './routes/thank-you-claim.js'
@@ -303,8 +306,9 @@ if (isRedisConnected()) {
   await fastify.register(proxyRoutesWithRedis, { prefix: '/bazaar' })
   fastify.log.info('✓ Using Redis-backed proxy with distributed locking')
 } else {
-  await fastify.register(proxyRoutes, { prefix: '/bazaar' })
-  fastify.log.warn('⚠ Redis not connected - using fallback proxy (no distributed locking)')
+  // Temporarily disabled due to missing @blink402/onchain package
+  // await fastify.register(proxyRoutes, { prefix: '/bazaar' })
+  fastify.log.error('⚠ Redis not connected - proxy routes disabled (missing @blink402/onchain package)')
 }
 
 await fastify.register(blinksRoutes, { prefix: '/blinks' })
@@ -317,10 +321,12 @@ await fastify.register(jupiterRoutes, { prefix: '/api/jupiter' })
 await fastify.register(demoRoutes, { prefix: '/demo' })
 await fastify.register(adminRoutes, { prefix: '/admin' })
 await fastify.register(galleryRoutes, { prefix: '/api/gallery' })
-await fastify.register(walletAnalysisRoutes)
+// Temporarily disabled due to missing @blink402/helius package
+// await fastify.register(walletAnalysisRoutes)
 await fastify.register(tokenPriceRoutes, { prefix: '/token-price' })
 await fastify.register(qrCodeRoutes, { prefix: '/qr-code' })
-await fastify.register(aiServicesRoutes, { prefix: '/ai-services' })
+// Temporarily disabled due to missing @blink402/helius package
+// await fastify.register(aiServicesRoutes, { prefix: '/ai-services' })
 await fastify.register(aiRoutes, { prefix: '/ai' })
 await fastify.register(socialViewRoutes, { prefix: '/a' })
 await fastify.register(thankYouClaimRoutes, { prefix: '/a' })

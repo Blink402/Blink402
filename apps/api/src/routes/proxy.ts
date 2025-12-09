@@ -37,10 +37,11 @@ import {
   releaseLock,
   isRedisConnected,
 } from '@blink402/redis'
-import {
-  verifyPayment as verifyOnchainPayment,
-  settlePayment as settleOnchainPayment,
-} from '@blink402/onchain'
+// Temporarily disabled - @blink402/onchain package doesn't exist
+// import {
+//   verifyPayment as verifyOnchainPayment,
+//   settlePayment as settleOnchainPayment,
+// } from '@blink402/onchain'
 import { Keypair } from '@solana/web3.js'
 import { retryWithBackoff, updateCircuitBreaker } from '../utils/endpoint-health.js'
 
@@ -493,6 +494,12 @@ export const proxyRoutes: FastifyPluginAsync = async (fastify) => {
 
         // If payment not yet verified, verify it now
         if (lockedRun.status === 'pending' && payment_header) {
+          // Temporarily disabled - @blink402/onchain package doesn't exist
+          // Production uses proxy-with-redis.ts instead
+          fastify.log.error({ reference }, 'Payment verification disabled - use proxy-with-redis.ts in production')
+          throw new Error('Payment verification temporarily disabled - missing @blink402/onchain package')
+
+          /* DISABLED CODE - Uncomment when @blink402/onchain is available
           // Declare variables outside try block for error handling access
           let settleResponse: any
           let payer = ''
@@ -645,11 +652,12 @@ export const proxyRoutes: FastifyPluginAsync = async (fastify) => {
               })
             }
           }
+          */
         }
 
         // CRITICAL: Check that payment was actually verified before executing API
         // Status must be 'paid' or 'executed' AND must have signature proving payment
-        if (lockedRun.status !== 'paid' && lockedRun.status !== 'executed') {
+        if ((lockedRun.status as any) !== 'paid' && (lockedRun.status as any) !== 'executed') {
           fastify.log.warn({
             reference,
             status: lockedRun.status,
@@ -909,7 +917,7 @@ export const proxyRoutes: FastifyPluginAsync = async (fastify) => {
         let refundIssued = false
         let refundError: string | null = null
 
-        if (lockedRun.signature && (lockedRun.status === 'paid' || lockedRun.status === 'executed')) {
+        if (lockedRun.signature && ((lockedRun.status as any) === 'paid' || (lockedRun.status as any) === 'executed')) {
           try {
             fastify.log.info({
               reference,

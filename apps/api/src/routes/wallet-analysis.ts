@@ -1,5 +1,7 @@
 import { FastifyPluginAsync } from 'fastify'
-import { analyzeWallet, isValidSolanaAddress } from '@blink402/helius'
+// Temporarily disabled - @blink402/helius package doesn't exist
+// import { analyzeWallet, isValidSolanaAddress } from '@blink402/helius'
+import { isValidSolanaAddress } from '@blink402/solana'
 import { getCache, setCache, isRedisConnected } from '@blink402/redis'
 import {
   getB402HolderTier,
@@ -110,6 +112,10 @@ export const walletAnalysisRoutes: FastifyPluginAsync = async (fastify) => {
         }
       })
 
+      // Temporarily disabled - @blink402/helius package doesn't exist
+      throw new Error('Wallet analysis temporarily disabled - missing @blink402/helius package')
+
+      /* DISABLED CODE - Uncomment when @blink402/helius is available
       // Run wallet analysis with spam detection enabled for BRONZE+ tiers
       const includeSpamDetection = b402Info.tier !== 'NONE'
       const analysis = await analyzeWallet(walletAddress, { includeSpamDetection })
@@ -167,9 +173,9 @@ export const walletAnalysisRoutes: FastifyPluginAsync = async (fastify) => {
       const spamStats = includeSpamDetection && analysis.tokens.length > 0
         ? {
             totalTokens: analysis.tokens.length,
-            spamTokens: analysis.tokens.filter(t => t.spamDetection?.isSpam).length,
-            criticalRisk: analysis.tokens.filter(t => t.spamDetection?.riskLevel === 'critical').length,
-            highRisk: analysis.tokens.filter(t => t.spamDetection?.riskLevel === 'high').length,
+            spamTokens: analysis.tokens.filter((t: any) => t.spamDetection?.isSpam).length,
+            criticalRisk: analysis.tokens.filter((t: any) => t.spamDetection?.riskLevel === 'critical').length,
+            highRisk: analysis.tokens.filter((t: any) => t.spamDetection?.riskLevel === 'high').length,
           }
         : null
 
@@ -205,6 +211,7 @@ export const walletAnalysisRoutes: FastifyPluginAsync = async (fastify) => {
         duration_ms: duration,
         cached: false
       })
+      */
     } catch (error) {
       fastify.log.error({
         error,

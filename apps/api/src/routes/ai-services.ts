@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { isValidSolanaAddress } from '@blink402/helius'
+import { isValidSolanaAddress } from '@blink402/solana'
 
 /**
  * AI Services Routes - Premium demo Blinks
